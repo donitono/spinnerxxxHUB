@@ -41,30 +41,35 @@ autoReel.humanLike = true
 autoReel.debugMode = false
 autoReel.currentConnection = nil
 autoReel.inputConnection = nil
-autoReel.aggressiveMode = true -- New aggressive tracking mode
+autoReel.aggressiveMode = false -- Default to balanced mode
 autoReel.lastFishPosition = 0 -- Track fish movement
 autoReel.fishVelocity = 0 -- Predict fish movement
+autoReel.gameStartTime = 0 -- Track when minigame started
+autoReel.lastProgressCheck = 0 -- Track progress building
+autoReel.allowedToPlay = false -- Control when to start playing
 
--- Configuration
+-- Configuration (Balanced for natural gameplay)
 local CONFIG = {
-    -- Timing settings (more responsive)
-    reactionTime = {min = 0.02, max = 0.08}, -- Much faster reaction (20-80ms)
-    holdDuration = {min = 0.05, max = 0.3}, -- Shorter, more responsive holds
-    releaseDelay = {min = 0.02, max = 0.1}, -- Faster release timing
+    -- Timing settings (more balanced)
+    reactionTime = {min = 0.05, max = 0.15}, -- More human-like reaction (50-150ms)
+    holdDuration = {min = 0.1, max = 0.4}, -- Longer holds for natural gameplay
+    releaseDelay = {min = 0.05, max = 0.2}, -- Reasonable release timing
     
-    -- Precision settings (improved tracking)
-    targetTolerance = 0.02, -- Much tighter tolerance (2%)
+    -- Precision settings (balanced)
+    targetTolerance = 0.03, -- Reasonable tolerance (3%)
     progressThreshold = 0.85, -- Start being more careful at 85% progress
-    updateFrequency = 0.016, -- 60 FPS update rate (~16ms)
+    updateFrequency = 0.05, -- 20 FPS update rate (natural pace)
     
-    -- Movement settings
-    fastTrackingMode = true, -- Enable fast tracking
-    predictiveMovement = true, -- Predict fish movement
+    -- Natural gameplay settings
+    fastTrackingMode = false, -- Disable for more natural gameplay
+    predictiveMovement = false, -- Disable prediction for realism
+    progressWaitTime = {min = 0.5, max = 1.5}, -- Wait for progress to build naturally
     
-    -- Human behavior (reduced for better performance)
-    missChance = 0.02, -- 2% chance to "miss" 
-    overcompensateChance = 0.05, -- 5% chance to overcompensate
-    perfectPlayChance = 0.85, -- 85% chance to play perfectly
+    -- Human behavior (increased for realism)
+    missChance = 0.08, -- 8% chance to "miss" 
+    overcompensateChance = 0.12, -- 12% chance to overcompensate
+    perfectPlayChance = 0.65, -- 65% chance to play perfectly
+    struggleChance = 0.15, -- 15% chance to "struggle" briefly
 }
 
 -- Helper function for random delays
@@ -72,13 +77,15 @@ local function randomDelay(min, max)
     return min + (math.random() * (max - min))
 end
 
--- Human-like random behavior
+-- Human-like random behavior (enhanced)
 local function getRandomBehavior()
     local rand = math.random()
     if rand < CONFIG.missChance then
         return "miss" -- Intentionally miss slightly
     elseif rand < CONFIG.missChance + CONFIG.overcompensateChance then
         return "overcompensate" -- Overcompensate movement
+    elseif rand < CONFIG.missChance + CONFIG.overcompensateChance + CONFIG.struggleChance then
+        return "struggle" -- Brief struggle/hesitation
     else
         return "normal" -- Normal behavior
     end
@@ -100,110 +107,73 @@ local function getReelPositions(reelGui)
     return fish, playerbar, progress
 end
 
--- Calculate if player needs to move towards fish (improved tracking)
+-- Calculate if player needs to move towards fish (Balanced tracking)
 local function calculateMovement(fish, playerbar, progress)
     local fishPos = fish.Position.X.Scale
     local playerPos = playerbar.Position.X.Scale
     local progressBar = progress:FindFirstChild("bar")
     local currentProgress = progressBar and progressBar.Size.X.Scale or 0
     
-    -- Track fish velocity for prediction
-    if autoReel.lastFishPosition then
-        autoReel.fishVelocity = fishPos - autoReel.lastFishPosition
-    end
-    autoReel.lastFishPosition = fishPos
-    
-    -- Predict where fish will be (if moving fast)
-    local predictedFishPos = fishPos
-    if CONFIG.predictiveMovement and math.abs(autoReel.fishVelocity) > 0.02 then
-        predictedFishPos = fishPos + (autoReel.fishVelocity * 2) -- Predict 2 frames ahead
-    end
-    
-    -- Calculate distance to predicted position
-    local distance = predictedFishPos - playerPos
+    -- Simple distance calculation (no prediction for natural gameplay)
+    local distance = fishPos - playerPos
     local absDistance = math.abs(distance)
     
-    -- Dynamic tolerance based on fish speed and progress
+    -- Adjust tolerance based on progress (more forgiving early game)
     local tolerance = CONFIG.targetTolerance
-    if math.abs(autoReel.fishVelocity) > 0.05 then
-        tolerance = tolerance * 0.5 -- Tighter tolerance for fast-moving fish
-    end
-    if currentProgress > CONFIG.progressThreshold then
-        tolerance = tolerance * 0.3 -- Even more precise near completion
-    end
-    
-    -- Aggressive mode adjustments
-    if autoReel.aggressiveMode then
-        tolerance = tolerance * 0.7 -- Always more precise
+    if currentProgress < 0.3 then
+        tolerance = tolerance * 2 -- More forgiving in early game
+    elseif currentProgress > CONFIG.progressThreshold then
+        tolerance = tolerance * 0.6 -- More precise near completion
     end
     
-    -- Get human behavior for this action (but less random for better tracking)
+    -- Get human behavior for this action
     local behavior = getRandomBehavior()
-    if CONFIG.fastTrackingMode and absDistance > 0.08 then
-        behavior = "normal" -- Force normal behavior for large movements
-    end
     
     -- Determine if we need to move
     local needsMovement = absDistance > tolerance
     local direction = distance > 0 and "right" or "left"
     
-    -- Calculate movement urgency based on distance and fish speed
+    -- Simple urgency based on distance only
     local urgency = "normal"
-    if absDistance > 0.15 or math.abs(autoReel.fishVelocity) > 0.08 then
+    if absDistance > 0.1 then
         urgency = "high"
-    elseif absDistance > 0.05 or math.abs(autoReel.fishVelocity) > 0.03 then
+    elseif absDistance > 0.05 then
         urgency = "medium"
     end
     
-    return needsMovement, direction, absDistance, currentProgress, behavior, urgency, autoReel.fishVelocity
+    return needsMovement, direction, absDistance, currentProgress, behavior, urgency
 end
 
--- Improved input simulation with faster response
+-- Natural input simulation with realistic timing
 local function simulateInput(action, duration, urgency)
-    if not autoReel.enabled then return end
+    if not autoReel.enabled or not autoReel.allowedToPlay then return end
     
     local VirtualInputManager = game:GetService("VirtualInputManager")
     urgency = urgency or "normal"
     
     if action == "hold" then
-        -- Start holding immediately for urgent movements
+        -- Natural hold timing
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, player, 0)
         
-        -- Adjust duration based on urgency
-        local actualDuration = duration
-        if urgency == "high" then
-            actualDuration = duration * 0.8 -- Shorter for urgent moves
-        elseif urgency == "medium" then
-            actualDuration = duration * 0.9
-        end
-        
-        -- Add minimal variation for fast tracking
-        actualDuration = actualDuration + randomDelay(-0.01, 0.01)
+        -- Realistic duration with natural variation
+        local actualDuration = duration + randomDelay(-0.05, 0.05)
         
         spawn(function()
             wait(actualDuration)
-            if autoReel.enabled then
+            if autoReel.enabled and autoReel.allowedToPlay then
                 VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, player, 0)
             end
         end)
         
     elseif action == "tap" then
-        -- Quick tap with minimal delay
+        -- Quick tap with natural timing
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, player, 0)
-        wait(randomDelay(0.02, 0.05)) -- Much faster taps
-        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, player, 0)
-        
-    elseif action == "continuous" then
-        -- New continuous hold mode for precise tracking
-        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, player, 0)
-        -- Will be released by the calling function
-    elseif action == "release" then
-        -- Release continuous hold
+        wait(randomDelay(0.08, 0.15)) -- Natural tap duration
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, player, 0)
     end
 end
 
--- Main reel automation logic
+-- Main reel automation logic (Natural gameplay version)
 local function handleReelMinigame(reelGui)
     local fish, playerbar, progress = getReelPositions(reelGui)
     if not fish or not playerbar or not progress then
@@ -212,8 +182,22 @@ local function handleReelMinigame(reelGui)
     end
     
     if autoReel.debugMode then
-        print("🎣 Auto Reel: Minigame detected, starting automation...")
+        print("🎣 Auto Reel: Minigame detected, starting natural gameplay...")
     end
+    
+    -- Initialize game timing
+    autoReel.gameStartTime = tick()
+    autoReel.allowedToPlay = false
+    autoReel.lastProgressCheck = 0
+    
+    -- Initial delay to let player see the minigame start
+    spawn(function()
+        wait(randomDelay(0.3, 0.8)) -- Natural start delay
+        autoReel.allowedToPlay = true
+        if autoReel.debugMode then
+            print("🎣 Auto Reel: Starting to play...")
+        end
+    end)
     
     -- Main automation loop
     autoReel.currentConnection = RunService.Heartbeat:Connect(function()
@@ -232,71 +216,93 @@ local function handleReelMinigame(reelGui)
             return
         end
         
-        -- Get current positions and calculate movement (with velocity tracking)
-        local needsMovement, direction, distance, currentProgress, behavior, urgency, fishVelocity = calculateMovement(fish, playerbar, progress)
+        -- Don't play immediately - wait for allowedToPlay
+        if not autoReel.allowedToPlay then
+            wait(0.1)
+            return
+        end
+        
+        -- Get current positions and calculate movement
+        local needsMovement, direction, distance, currentProgress, behavior, urgency = calculateMovement(fish, playerbar, progress)
+        
+        -- Progress-based behavior: let progress build naturally
+        local timePlaying = tick() - autoReel.gameStartTime
+        local shouldPause = false
+        
+        -- Check if progress is building too fast
+        if currentProgress > autoReel.lastProgressCheck + 0.15 and timePlaying < 2 then
+            shouldPause = true -- Pause to let progress normalize
+            if autoReel.debugMode then
+                print("🎣 Auto Reel: Pausing to let progress build naturally...")
+            end
+        end
+        autoReel.lastProgressCheck = currentProgress
         
         if autoReel.debugMode then
-            print(string.format("🎣 Distance: %.3f, Progress: %.1f%%, Urgency: %s, FishVel: %.3f", 
-                distance, currentProgress * 100, urgency, fishVelocity or 0))
+            print(string.format("🎣 Distance: %.3f, Progress: %.1f%%, Behavior: %s, Time: %.1fs", 
+                distance, currentProgress * 100, behavior, timePlaying))
+        end
+        
+        -- Implement struggle/pause behavior
+        if behavior == "struggle" then
+            if autoReel.debugMode then
+                print("🎣 Auto Reel: Struggling briefly...")
+            end
+            wait(randomDelay(0.3, 0.8)) -- Brief struggle pause
+            return
+        end
+        
+        -- Pause if progress building too fast
+        if shouldPause then
+            wait(randomDelay(0.5, 1.2))
+            return
         end
         
         if needsMovement then
-            -- Ultra-fast response system for aggressive tracking
-            local reactionDelay = 0
-            local holdTime = 0
+        if needsMovement then
+            -- Natural response system with realistic timing
+            local reactionDelay = randomDelay(CONFIG.reactionTime.min, CONFIG.reactionTime.max)
+            local holdTime = math.clamp(distance * 1.5, CONFIG.holdDuration.min, CONFIG.holdDuration.max)
             
-            if urgency == "high" then
-                -- Immediate response for large movements or fast fish
-                reactionDelay = 0.005 -- Almost instant (5ms)
-                holdTime = math.clamp(distance * 2.0, 0.08, 0.3)
-            elseif urgency == "medium" then
-                -- Very quick response for medium movements
-                reactionDelay = randomDelay(0.01, 0.02)
-                holdTime = math.clamp(distance * 1.5, 0.06, 0.2)
-            else
-                -- Still fast response for small adjustments
-                reactionDelay = randomDelay(0.02, 0.04)
-                holdTime = math.clamp(distance * 1.0, 0.04, 0.15)
-            end
-            
-            -- Aggressive mode: even faster response
-            if autoReel.aggressiveMode then
-                reactionDelay = reactionDelay * 0.5
-                holdTime = holdTime * 0.9
-            end
-            
-            -- Modify based on behavior (minimal impact for responsiveness)
+            -- Modify based on behavior for realism
             if behavior == "miss" then
-                holdTime = holdTime * 0.9
+                holdTime = holdTime * 0.7 -- Shorter hold (intentional miss)
+                if autoReel.debugMode then
+                    print("🎣 Auto Reel: Intentional slight miss")
+                end
             elseif behavior == "overcompensate" then
-                holdTime = holdTime * 1.05
+                holdTime = holdTime * 1.4 -- Longer hold (overcompensate)
+                if autoReel.debugMode then
+                    print("🎣 Auto Reel: Overcompensating movement")
+                end
             end
             
-            -- Execute movement with minimal delay
+            -- Execute movement with natural delays
             spawn(function()
                 wait(reactionDelay)
-                if autoReel.enabled then
+                if autoReel.enabled and autoReel.allowedToPlay then
                     simulateInput("hold", holdTime, urgency)
                     
-                    -- Minimal wait before next action
-                    local nextDelay = holdTime + 0.01
+                    -- Natural wait before next action
+                    local nextDelay = holdTime + randomDelay(CONFIG.releaseDelay.min, CONFIG.releaseDelay.max)
                     wait(nextDelay)
                 end
             end)
             
-            -- Minimal prevent rapid-fire delay
-            wait(0.01)
+            -- Prevent rapid inputs
+            wait(randomDelay(0.1, 0.25))
         else
-            -- We're close enough, make precise micro-adjustments
-            if distance > 0.005 and math.random() < 0.8 then -- 80% chance for micro-adjustment
+            -- Fine adjustments with realistic frequency
+            if distance > 0.01 and math.random() < 0.3 then -- 30% chance for adjustment
                 simulateInput("tap", nil, "normal")
-                wait(0.03) -- Very short wait
+                wait(randomDelay(0.2, 0.5))
             end
         end
         
-        -- Maximum frequency updates for ultra-responsive tracking
-        wait(0.008) -- ~125 FPS update rate
+        -- Natural update frequency (not too fast)
+        wait(CONFIG.updateFrequency)
     end)
+end
 end
 
 -- Start auto reel
