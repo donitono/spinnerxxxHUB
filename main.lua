@@ -121,19 +121,26 @@ end
 -- Load script from URL with error handling
 local function loadScriptFromURL(url, fallbackUrl, scriptName)
     local success, result = pcall(function()
-        return game:HttpGet(url)
+        return game:GetService("HttpService"):GetAsync(url)
     end)
     
     if not success then
         warn("Failed to load " .. scriptName .. " from primary URL: " .. tostring(result))
-        warn("Trying fallback URL...")
         
+        -- Try alternative HttpGet method
         success, result = pcall(function()
-            return game:HttpGet(fallbackUrl)
+            return game:HttpGet(url)
         end)
         
+        if not success and fallbackUrl then
+            warn("Trying fallback URL...")
+            success, result = pcall(function()
+                return game:HttpGet(fallbackUrl)
+            end)
+        end
+        
         if not success then
-            error("Failed to load " .. scriptName .. " from both URLs: " .. tostring(result))
+            error("Failed to load " .. scriptName .. ": " .. tostring(result))
         end
     end
     
@@ -157,9 +164,11 @@ local function loadSuperHub()
     local success, err = pcall(function()
         if game:GetService("RunService"):IsStudio() then
             -- Local development mode - load from file
-            autofarm = require(game.Workspace.spinnerxxxHUB.Modules.autofarm)
+            warn("Studio mode detected - using local fallback")
+            autofarm = require(script.Parent.Modules.autofarm)
         else
             -- Online mode - load from GitHub
+            print("Loading autofarm module from GitHub...")
             local autofarmScript = loadScriptFromURL(
                 URLS.autofarm,
                 URLS.fallback_autofarm,
@@ -187,47 +196,44 @@ local function loadSuperHub()
     local Library
     success, err = pcall(function()
         if game:GetService("RunService"):IsStudio() then
-            -- Local development mode - load from file (simplified kavo untuk testing)
-            Library = {
-                CreateLib = function(name, theme)
-                    return {
-                        NewTab = function(tabName)
-                            return {
-                                NewSection = function(sectionName)
-                                    return {
-                                        NewToggle = function(name, desc, callback)
-                                            callback(false) -- Default state
-                                        end,
-                                        NewButton = function(name, desc, callback)
-                                            -- Button creation
-                                        end,
-                                        NewSlider = function(name, desc, max, min, callback)
-                                            callback(min) -- Default value
-                                        end,
-                                        NewDropdown = function(name, desc, options, callback)
-                                            callback(options[1]) -- Default option
-                                        end,
-                                        NewTextBox = function(name, desc, callback)
-                                            callback("") -- Default text
-                                        end,
-                                        NewLabel = function(text)
-                                            -- Label creation
-                                        end
-                                    }
-                                end
-                            }
-                        end
-                    }
-                end
-            }
+            -- Local development mode - create basic fallback UI
+            warn("Studio mode detected - using basic UI fallback")
+            Library = createBasicUI()
         else
-            -- Online mode - load Kavo library
-            local kavoScript = loadScriptFromURL(
-                URLS.kavo,
-                URLS.fallback_kavo,
-                "Kavo UI Library"
-            )
-            Library = loadstring(kavoScript)()
+            -- Online mode - try to load Kavo library
+            print("Loading Kavo UI library...")
+            
+            -- Try multiple Kavo library sources
+            local kavoSources = {
+                "https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua",
+                "https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/kavo",
+                URLS.kavo -- Our custom kavo if available
+            }
+            
+            local kavoLoaded = false
+            for i, kavoUrl in ipairs(kavoSources) do
+                local kavoSuccess, kavoResult = pcall(function()
+                    return game:HttpGet(kavoUrl)
+                end)
+                
+                if kavoSuccess then
+                    local librarySuccess, libraryResult = pcall(function()
+                        return loadstring(kavoResult)()
+                    end)
+                    
+                    if librarySuccess then
+                        Library = libraryResult
+                        kavoLoaded = true
+                        print("✓ Kavo loaded from source " .. i)
+                        break
+                    end
+                end
+            end
+            
+            if not kavoLoaded then
+                warn("Failed to load Kavo library, using basic fallback")
+                Library = createBasicUI()
+            end
         end
     end)
     
@@ -485,6 +491,56 @@ function createMainUI(Library, autofarm)
     end)
 end
 
+-- Basic UI fallback function
+local function createBasicUI()
+    return {
+        CreateLib = function(name, theme)
+            print("Creating basic UI: " .. name)
+            return {
+                NewTab = function(tabName)
+                    print("Tab created: " .. tabName)
+                    return {
+                        NewSection = function(sectionName)
+                            print("Section created: " .. sectionName)
+                            return {
+                                NewToggle = function(name, desc, callback)
+                                    print("Toggle: " .. name .. " (Default: false)")
+                                    if callback then callback(false) end
+                                end,
+                                NewButton = function(name, desc, callback)
+                                    print("Button: " .. name)
+                                    -- Auto-trigger for testing
+                                    if name:find("Status") and callback then
+                                        spawn(function()
+                                            wait(1)
+                                            callback()
+                                        end)
+                                    end
+                                end,
+                                NewSlider = function(name, desc, max, min, callback)
+                                    print("Slider: " .. name .. " (Default: " .. min .. ")")
+                                    if callback then callback(min) end
+                                end,
+                                NewDropdown = function(name, desc, options, callback)
+                                    print("Dropdown: " .. name .. " (Default: " .. (options[1] or "None") .. ")")
+                                    if callback and options[1] then callback(options[1]) end
+                                end,
+                                NewTextBox = function(name, desc, callback)
+                                    print("TextBox: " .. name)
+                                    if callback then callback("") end
+                                end,
+                                NewLabel = function(text)
+                                    print("Label: " .. text)
+                                end
+                            }
+                        end
+                    }
+                end
+            }
+        end
+    }
+end
+
 -- Error handling wrapper
 local function safeExecute(func, errorMessage)
     local success, err = pcall(func)
@@ -497,30 +553,66 @@ end
 
 -- Anti-detection measures
 local function setupAntiDetection()
-    -- Hook HttpGet untuk bypass deteksi
-    local oldHttpGet = game.HttpGet
-    game.HttpGet = function(self, url, ...)
-        if url:find("spinnerxxxHUB") then
-            -- Log akses untuk debugging
-            print("Loading from: " .. url)
+    -- Safer HttpGet hook
+    local success, err = pcall(function()
+        local HttpService = game:GetService("HttpService")
+        if HttpService and HttpService.GetAsync then
+            print("✓ HttpService available")
         end
-        return oldHttpGet(self, url, ...)
+        
+        -- Only hook if necessary
+        if game.HttpGet then
+            local oldHttpGet = game.HttpGet
+            game.HttpGet = function(self, url, ...)
+                if url and url:find("spinnerxxxHUB") then
+                    print("Loading from: " .. url)
+                end
+                return oldHttpGet(self, url, ...)
+            end
+        end
+    end)
+    
+    if not success then
+        warn("Anti-detection setup failed: " .. tostring(err))
     end
 end
 
 -- Initialize anti-detection
 setupAntiDetection()
 
--- Main execution
+-- Main execution with comprehensive error handling
 spawn(function()
-    if not safeExecute(loadSuperHub, "Failed to load SUPER HUB") then
-        -- Fallback notification
-        game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "SUPER HUB";
-            Text = "Failed to load script. Check console for details.";
-            Duration = 5;
-        })
+    local function executeWithFallback()
+        -- Try main loading
+        local success = safeExecute(loadSuperHub, "Failed to load SUPER HUB")
+        
+        if not success then
+            warn("Main loading failed, trying emergency fallback...")
+            
+            -- Emergency fallback - basic functionality only
+            local success2, err2 = pcall(function()
+                print("=== EMERGENCY MODE ===")
+                print("SUPER HUB - Basic Mode")
+                print("Some features may be limited")
+                print("======================")
+                
+                -- Try to provide basic notification
+                if game:GetService("StarterGui") then
+                    game:GetService("StarterGui"):SetCore("SendNotification", {
+                        Title = "SUPER HUB - Emergency Mode";
+                        Text = "Loaded in basic mode. Check console for details.";
+                        Duration = 5;
+                    })
+                end
+            end)
+            
+            if not success2 then
+                warn("Emergency fallback also failed: " .. tostring(err2))
+            end
+        end
     end
+    
+    executeWithFallback()
 end)
 
 -- Return script info for external access
