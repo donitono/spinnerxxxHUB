@@ -203,20 +203,22 @@ local function loadSuperHub()
             -- Online mode - try to load Kavo library
             print("Loading Kavo UI library...")
             
-            -- Try multiple Kavo library sources
+            -- Try multiple Kavo library sources (prioritize our custom kavo)
             local kavoSources = {
+                URLS.kavo, -- Our custom kavo FIRST
                 "https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua",
-                "https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/kavo",
-                URLS.kavo -- Our custom kavo if available
+                "https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/kavo"
             }
             
             local kavoLoaded = false
             for i, kavoUrl in ipairs(kavoSources) do
+                print("Trying to load Kavo from source " .. i .. ": " .. kavoUrl)
                 local kavoSuccess, kavoResult = pcall(function()
                     return game:HttpGet(kavoUrl)
                 end)
                 
                 if kavoSuccess then
+                    print("✓ Successfully downloaded from source " .. i)
                     local librarySuccess, libraryResult = pcall(function()
                         return loadstring(kavoResult)()
                     end)
@@ -224,9 +226,16 @@ local function loadSuperHub()
                     if librarySuccess then
                         Library = libraryResult
                         kavoLoaded = true
-                        print("✓ Kavo loaded from source " .. i)
+                        print("✓ Kavo UI library loaded from source " .. i)
+                        if i == 1 then
+                            print("✓ Using YOUR custom kavo.lua from GitHub!")
+                        end
                         break
+                    else
+                        warn("Failed to execute Kavo from source " .. i .. ": " .. tostring(libraryResult))
                     end
+                else
+                    warn("Failed to download from source " .. i .. ": " .. tostring(kavoResult))
                 end
             end
             
@@ -423,21 +432,137 @@ local function createFloatingButton(restoreCallback)
     return screenGui
 end
 
+-- Add minimize button to Kavo UI header
+local function addMinimizeButton(windowGui, isMinimized, restoreCallback)
+    spawn(function()
+        wait(1) -- Wait for UI to be fully created
+        
+        -- Find the main frame and title bar
+        local function findMainFrame(parent)
+            for _, child in pairs(parent:GetChildren()) do
+                if child:IsA("Frame") and (child.Name:lower():find("main") or child.Size.X.Scale > 0.3) then
+                    return child
+                elseif child:IsA("GuiObject") then
+                    local result = findMainFrame(child)
+                    if result then return result end
+                end
+            end
+            return nil
+        end
+        
+        local function findTitleBar(frame)
+            for _, child in pairs(frame:GetChildren()) do
+                if child:IsA("Frame") and child.Size.Y.Scale < 0.2 and child.Position.Y.Scale == 0 then
+                    return child
+                elseif child:IsA("GuiObject") then
+                    local result = findTitleBar(child)
+                    if result then return result end
+                end
+            end
+            return nil
+        end
+        
+        if windowGui then
+            local mainFrame = findMainFrame(windowGui)
+            if mainFrame then
+                local titleBar = findTitleBar(mainFrame)
+                if titleBar then
+                    -- Create minimize button
+                    local minimizeBtn = Instance.new("TextButton")
+                    minimizeBtn.Name = "MinimizeButton"
+                    minimizeBtn.Size = UDim2.new(0, 25, 0, 25)
+                    minimizeBtn.Position = UDim2.new(1, -55, 0, 5) -- Next to close button
+                    minimizeBtn.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+                    minimizeBtn.BorderSizePixel = 0
+                    minimizeBtn.Text = "−"
+                    minimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    minimizeBtn.TextScaled = true
+                    minimizeBtn.Font = Enum.Font.GothamBold
+                    minimizeBtn.Parent = titleBar
+                    
+                    local corner = Instance.new("UICorner")
+                    corner.CornerRadius = UDim.new(0, 4)
+                    corner.Parent = minimizeBtn
+                    
+                    -- Hover effects
+                    minimizeBtn.MouseEnter:Connect(function()
+                        minimizeBtn.BackgroundColor3 = Color3.fromRGB(255, 140, 0)
+                    end)
+                    
+                    minimizeBtn.MouseLeave:Connect(function()
+                        minimizeBtn.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+                    end)
+                    
+                    -- Click event
+                    minimizeBtn.MouseButton1Click:Connect(function()
+                        if not isMinimized.value then
+                            isMinimized.value = true
+                            
+                            -- Hide main window with animation
+                            local hideTween = TweenService:Create(windowGui,
+                                TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+                                {
+                                    Size = UDim2.new(0, 0, 0, 0),
+                                    Position = UDim2.new(0.5, 0, 0.5, 0)
+                                }
+                            )
+                            hideTween:Play()
+                            
+                            hideTween.Completed:Connect(function()
+                                windowGui.Enabled = false
+                                
+                                -- Create floating button
+                                createFloatingButton(function()
+                                    if windowGui then
+                                        windowGui.Enabled = true
+                                        isMinimized.value = false
+                                        
+                                        -- Restore window with animation
+                                        local showTween = TweenService:Create(windowGui,
+                                            TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                                            {
+                                                Size = UDim2.new(0, 500, 0, 400),
+                                                Position = UDim2.new(0.5, -250, 0.5, -200)
+                                            }
+                                        )
+                                        showTween:Play()
+                                        
+                                        print("SUPER HUB UI restored!")
+                                    end
+                                end)
+                            end)
+                            
+                            print("SUPER HUB UI minimized - Click floating button to restore")
+                        end
+                    end)
+                    
+                    print("✓ Minimize button added to UI header")
+                else
+                    warn("Could not find title bar to add minimize button")
+                end
+            else
+                warn("Could not find main frame to add minimize button")
+            end
+        end
+    end)
+end
+
 -- Create main UI function
 function createMainUI(Library, autofarm)
     -- Create Main Window
     local Window = Library.CreateLib("SUPER HUB v" .. SCRIPT_INFO.version, "DarkTheme")
     
     -- Store window reference for minimize/restore
-    local isMinimized = false
+    local isMinimized = {value = false} -- Use table for reference passing
     local windowGui = nil
     
-    -- Find the main window GUI
+    -- Find the main window GUI and add minimize button
     spawn(function()
         wait(1) -- Wait for UI to be created
         for _, gui in pairs(Players.LocalPlayer.PlayerGui:GetChildren()) do
             if gui.Name:lower():find("kavo") or gui.Name:lower():find("lib") then
                 windowGui = gui
+                addMinimizeButton(windowGui, isMinimized)
                 break
             end
         end
@@ -677,8 +802,8 @@ function createMainUI(Library, autofarm)
     local UIControlSection = CreditsTab:NewSection("UI Control")
     
     UIControlSection:NewButton("Minimize UI", "Hide UI and show floating button", function()
-        if not isMinimized and windowGui then
-            isMinimized = true
+        if not isMinimized.value and windowGui then
+            isMinimized.value = true
             
             -- Hide main window with animation
             local hideTween = TweenService:Create(windowGui,
@@ -697,7 +822,7 @@ function createMainUI(Library, autofarm)
                 createFloatingButton(function()
                     if windowGui then
                         windowGui.Enabled = true
-                        isMinimized = false
+                        isMinimized.value = false
                         
                         -- Restore window with animation
                         local showTween = TweenService:Create(windowGui,
