@@ -101,6 +101,10 @@ local function setupChatCommands()
                 print("/startall - Start all features")
                 print("/stopall - Stop all features")
                 print("/status - Show status")
+                print("--- Advanced Reel ---")
+                print("/reeldebug - Toggle reel debug mode")
+                print("/analyze - Analyze current reel")
+                print("/testreel - Test reel input")
                 print("========================")
                 
             elseif msg == "/autocast" then
@@ -169,6 +173,31 @@ local function setupChatCommands()
                 print("Shake Mode: " .. tostring(status.shakeMode))
                 print("=======================")
                 createNotification("Status", "Check console for details")
+                
+            elseif msg == "/reeldebug" then
+                if autofarm.setReelDebugMode then
+                    local currentState = autofarm.advancedReel and autofarm.advancedReel.debugMode or false
+                    autofarm.setReelDebugMode(not currentState)
+                    createNotification("Reel Debug", (not currentState) and "Enabled" or "Disabled")
+                else
+                    createNotification("Error", "Advanced reel not available")
+                end
+                
+            elseif msg == "/analyze" then
+                if autofarm.analyzeCurrentReel then
+                    autofarm.analyzeCurrentReel()
+                    createNotification("Reel Analysis", "Check console for details")
+                else
+                    createNotification("Error", "Advanced reel not available")
+                end
+                
+            elseif msg == "/testreel" then
+                if autofarm.advancedReel and autofarm.advancedReel.test then
+                    autofarm.advancedReel.test()
+                    createNotification("Reel Test", "Input simulation test performed")
+                else
+                    createNotification("Error", "Advanced reel not available")
+                end
             end
         end)
     end)

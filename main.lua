@@ -340,13 +340,33 @@ function createMainUI(Library, autofarm)
     end)
     
     -- Auto Reel Toggle
-    AutofarmSection:NewToggle("Auto Reel", "Automatically reel in fish", function(state)
+    AutofarmSection:NewToggle("Auto Reel", "Automatically complete reel minigame like human", function(state)
         if state then
             autofarm.startAutoReel()
-            print("Auto Reel: Enabled")
+            print("Auto Reel: Enabled (Advanced minigame automation)")
         else
             autofarm.stopAutoReel()
             print("Auto Reel: Disabled")
+        end
+    end)
+    
+    -- Advanced Reel Controls Section
+    local AdvancedReelSection = AutofarmTab:NewSection("Advanced Reel Controls")
+    
+    AdvancedReelSection:NewToggle("Reel Debug Mode", "Show detailed reel automation logs", function(state)
+        autofarm.setReelDebugMode(state)
+        print("Reel Debug Mode: " .. (state and "Enabled" or "Disabled"))
+    end)
+    
+    AdvancedReelSection:NewButton("Analyze Current Reel", "Analyze active reel minigame", function()
+        autofarm.analyzeCurrentReel()
+    end)
+    
+    AdvancedReelSection:NewButton("Test Reel Input", "Test reel input simulation", function()
+        if autofarm.advancedReel then
+            autofarm.advancedReel.test()
+        else
+            print("Advanced reel not available")
         end
     end)
     
