@@ -14,7 +14,7 @@ local SCRIPT_INFO = {
 
 -- Online URLs untuk loading script
 local URLS = {
-    -- Ganti dengan URL raw GitHub Anda nanti
+    -- URLs GitHub repository Anda
     autofarm = "https://raw.githubusercontent.com/donitono/spinnerxxxHUB/main/Modules/autofarm.lua",
     kavo = "https://raw.githubusercontent.com/donitono/spinnerxxxHUB/main/kavo.lua",
     -- URL fallback jika ada masalah
