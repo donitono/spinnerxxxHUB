@@ -19,8 +19,27 @@ autofarm.autoCastEnabled = false
 autofarm.autoShakeEnabled = false
 autofarm.autoReelEnabled = false
 autofarm.alwaysCatchEnabled = false
+autofarm.randomDelayEnabled = false -- New: Random delay for human-like behavior
 autofarm.shakeMode = 1 -- 1 = sanhub method, 2 = neoxhub method
 autofarm.castMode = 1 -- 1 = legit, 2 = rage, 3 = random
+
+-- Human-like random delay function
+local function getRandomDelay(baseDelay, variationPercent)
+    if not autofarm.randomDelayEnabled then
+        return baseDelay
+    end
+    
+    -- Add random variation (±variationPercent)
+    local variation = baseDelay * (variationPercent / 100)
+    local minDelay = baseDelay - variation
+    local maxDelay = baseDelay + variation
+    
+    -- Ensure minimum delay is at least 0.1 seconds
+    minDelay = math.max(minDelay, 0.1)
+    
+    local randomDelay = minDelay + (math.random() * (maxDelay - minDelay))
+    return randomDelay
+end
 
 -- Auto Cast (dari kinghub dengan metodenya)
 function autofarm.startAutoCast(mode)
@@ -34,7 +53,8 @@ function autofarm.startAutoCast(mode)
         if child:IsA("Tool") and child:FindFirstChild("events") then
             local castEvent = child.events:FindFirstChild("cast")
             if castEvent then
-                task.wait(2) -- Delay sebelum cast
+                local castDelay = getRandomDelay(2, 30) -- 2±30% = 1.4-2.6 seconds
+                task.wait(castDelay) -- Random delay sebelum cast
                 
                 local success, err = pcall(function()
                     if autofarm.castMode == 1 then
@@ -113,7 +133,8 @@ function autofarm.startAutoCast(mode)
             if tool and tool:FindFirstChild("events") then
                 local castEvent = tool.events:FindFirstChild("cast")
                 if castEvent then
-                    task.wait(2) -- Delay sebelum recast
+                    local recastDelay = getRandomDelay(2, 40) -- 2±40% = 1.2-2.8 seconds
+                    task.wait(recastDelay) -- Random delay sebelum recast
                     
                     local success, err = pcall(function()
                         if autofarm.castMode == 1 then
@@ -254,7 +275,8 @@ function autofarm.startAutoShake(mode)
             local success, err = pcall(function()
                 -- Detect shake UI button seperti di neoxhub
                 if descendant.Name == "button" and descendant.Parent and descendant.Parent.Name == "safezone" then
-                    task.wait(0.3) -- Delay seperti di neoxhub
+                    local shakeDelay = getRandomDelay(0.3, 50) -- 0.3±50% = 0.15-0.45 seconds
+                    task.wait(shakeDelay) -- Random delay seperti reaksi manusia
                     
                     -- Method 1: Set SelectedObject + Return key (seperti neoxhub)
                     game:GetService("GuiService").SelectedObject = descendant
@@ -262,7 +284,8 @@ function autofarm.startAutoShake(mode)
                     VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
                     VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
                     
-                    task.wait(0.1)
+                    local cleanupDelay = getRandomDelay(0.1, 50) -- 0.1±50% = 0.05-0.15 seconds
+                    task.wait(cleanupDelay)
                     game:GetService("GuiService").SelectedObject = nil
                     
                     print("Shake performed (NeoxHub event method)")
@@ -327,8 +350,9 @@ function autofarm.startAutoReel()
                         end
                         
                         -- Alternative method - simulate space key press
+                        local keyPressDelay = getRandomDelay(0.05, 60) -- 0.05±60% = 0.02-0.08 seconds
                         UserInputService:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
-                        wait(0.05)
+                        wait(keyPressDelay)
                         UserInputService:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
                     end
                 end
@@ -350,7 +374,8 @@ function autofarm.startAutoReel()
                 warn("Auto Reel Error: " .. tostring(err))
             end
             
-            wait(0.1)
+            local loopDelay = getRandomDelay(0.1, 40) -- 0.1±40% = 0.06-0.14 seconds
+            wait(loopDelay)
         end
     end)
 end
@@ -407,6 +432,16 @@ function autofarm.stopAlwaysCatch()
 end
 
 -- Utility Functions
+function autofarm.setRandomDelay(enabled)
+    autofarm.randomDelayEnabled = enabled
+    if enabled then
+        print("Random Delay: Enabled - Human-like behavior activated")
+    else
+        print("Random Delay: Disabled - Fixed delays restored")
+    end
+    return true
+end
+
 function autofarm.setShakeMode(mode)
     if mode == 1 or mode == 2 then
         autofarm.shakeMode = mode
@@ -433,6 +468,7 @@ function autofarm.getStatus()
         autoShake = autofarm.autoShakeEnabled,
         autoReel = autofarm.autoReelEnabled,
         alwaysCatch = autofarm.alwaysCatchEnabled,
+        randomDelay = autofarm.randomDelayEnabled,
         shakeMode = autofarm.shakeMode,
         castMode = autofarm.castMode
     }
@@ -465,7 +501,8 @@ local function handleCharacterRespawn()
         -- Restart autofarm jika sedang aktif
         local status = autofarm.getStatus()
         if status.autoCast or status.autoShake or status.autoReel or status.alwaysCatch then
-            wait(2) -- Wait for character to load
+            local respawnDelay = getRandomDelay(2, 25) -- 2±25% = 1.5-2.5 seconds
+            wait(respawnDelay) -- Random wait for character to load
             if status.autoCast then autofarm.startAutoCast(status.castMode) end
             if status.autoShake then autofarm.startAutoShake(status.shakeMode) end
             if status.autoReel then autofarm.startAutoReel() end

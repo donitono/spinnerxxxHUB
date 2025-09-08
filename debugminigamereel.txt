@@ -1,0 +1,512 @@
+=== REEL DEBUGGER LOG ===
+Generated at tick: 1757300464.379809
+Player: Uangtuh
+Total Entries: 507
+
+[1757300184] [SYSTEM] 🚀 Reel Debugger initialized
+[1757300184] [SYSTEM] Creating debug UI...
+[1757300184] [SYSTEM] ✅ Debug UI created
+[1757300184] [SYSTEM] Setting up monitoring systems...
+[1757300184] [EVENTS] 📡 Monitoring remote events...
+[1757300184] [SYSTEM] ⏳ Waiting for reel minigame...
+[1757300184] [SYSTEM] ✅ All monitoring systems active
+[1757300184] [SYSTEM] 📱 Use the UI buttons to save logs, clear, analyze, or test
+[1757300184] [SYSTEM] 🎛️ Global commands available:
+[1757300184] [SYSTEM] _G.ReelDebugger.toggleUI() - Toggle debug UI
+[1757300184] [SYSTEM] _G.ReelDebugger.saveLog() - Save current log
+[1757300184] [SYSTEM] _G.ReelDebugger.clearLog() - Clear current log
+[1757300184] [SYSTEM] _G.ReelDebugger.analyze() - Analyze current reel
+[1757300184] [SYSTEM] _G.ReelDebugger.test() - Test reel events
+[1757300195] [EVENT] 📨 chat(table: 0x53b4407acdca0325)
+[1757300195] [EVENT] 📨 dialogstart(table: 0x49ee2cb9776b2075, Head, table: 0xcea4ff9d948006e5)
+[1757300196] [CHILD] PlayerGui gained child: ProximityPrompts (ScreenGui)
+[1757300203] [EVENT] 📨 rod_cast()
+[1757300204] [EVENT] 📨 chat(table: 0xc9aa71cd1ca8dd75)
+[1757300206] [EVENT] 📨 chat(table: 0x8f22a9a771e2b4b5)
+[1757300213] [EVENT] 📨 rod_cast()
+[1757300214] [CHILD] PlayerGui gained child: shakeui (ScreenGui)
+[1757300218] [EVENT] 📨 dialogstart(table: 0xd3b453cf439caa05, Head, table: 0x5d9fbcc6872c53b5)
+[1757300218] [EVENT] 📨 chat(table: 0xb9dcbb7c609c7ae5)
+[1757300219] [EVENT] 📨 dialogstart(table: 0xc86c69f0fbd67d35, Head, table: 0x343a822b94774fa5)
+[1757300225] [CHILD] PlayerGui lost child: shakeui (ScreenGui)
+[1757300225] [CHILD] PlayerGui gained child: reel (ScreenGui)
+[1757300225] [REEL] 🎣 REEL MINIGAME DETECTED!
+[1757300225] [ANALYZE] 📊 ANALYZING REEL UI STRUCTURE:
+[1757300225] [STRUCTURE] ├─ reel (ScreenGui)
+[1757300225] [STRUCTURE]   ├─ bar (Frame) - Visible: true - Size: {0.403691381, 0}, {0.042634353, 0} - Position: {0.5, 0}, {0.882456064, -20} - BG Color: 0, 0, 0
+[1757300225] [STRUCTURE]     ├─ reel (LocalScript)
+[1757300225] [STRUCTURE]       ├─ rod (ObjectValue)
+[1757300225] [STRUCTURE]       ├─ fish (StringValue)
+[1757300225] [STRUCTURE]       ├─ TridentGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ No-LifeGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ SpinecasterGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ UltratechGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ KatanaGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ PenGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ FabulousGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ zone (StringValue)
+[1757300225] [STRUCTURE]       ├─ MilaGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ LeviathansFangGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ AzureOfLagoonGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ FreeSpiritRodGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ GlobalEventGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ EvilPitchforkGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ PaperFanGradient (UIGradient)
+[1757300225] [STRUCTURE]     ├─ fish (Frame) - Visible: true - Size: {0.00999999978, 0}, {2, 0} - Position: {0.100000001, 0}, {0.458999991, 0} - BG Color: 0.262745, 0.294118, 0.356863
+[1757300225] [STRUCTURE]       ├─ UICorner (UICorner)
+[1757300225] [STRUCTURE]       ├─ stroke (UIStroke)
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ icon (ImageLabel) - Visible: true - Size: {6.23075819, 0}, {0.778844535, 0} - Position: {0.41823253, 0}, {-0.321537256, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300225] [STRUCTURE]       ├─ sparkles (ParticleEmitter)
+[1757300225] [STRUCTURE]       ├─ TridentSlash (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ TridentSlashEvil (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ TridentSlashSpinecaster (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ TridentSlashTetra (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ TridentSlashKatana (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ TridentSlashPen (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ TridentSlashMila (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]       ├─ TridentSlashFabulous (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ LeviathansFangSlash (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ AzureOfLagoonSlash (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ FreeSpiritRodSlash (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ TridentSlashPaperFan (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]     ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300225] [STRUCTURE]     ├─ stroke (UIStroke)
+[1757300225] [STRUCTURE]       ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]     ├─ licon (ImageLabel) - Visible: true - Size: {0.0199999996, 0}, {0.5, 0} - Position: {-0.00999999139, 0}, {0.499999762, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]     ├─ ricon (ImageLabel) - Visible: true - Size: {0.0199999996, 0}, {0.5, 0} - Position: {1.00999999, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]     ├─ playerbar (Frame) - Visible: true - Size: {0.300000012, 0}, {1.29999995, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 0.945098, 0.945098, 0.945098
+[1757300225] [STRUCTURE]       ├─ UICorner (UICorner)
+[1757300225] [STRUCTURE]       ├─ stroke (UIStroke)
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ xboxcontrol (ImageLabel) - Visible: false - Size: {0.239999995, 0}, {0, 40} - Position: {0.5, 0}, {-1.60000002, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300225] [STRUCTURE]       ├─ left (ImageLabel) - Visible: true - Size: {0.166405171, 0}, {0.9600299, 0} - Position: {0.0500000007, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300225] [STRUCTURE]       ├─ right (ImageLabel) - Visible: true - Size: {0.166405171, 0}, {0.9600299, 0} - Position: {0.949999988, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300225] [STRUCTURE]       ├─ Rod (ImageLabel) - Visible: true - Size: {1.14047837, 0}, {6.61224604, 0} - Position: {0.5, 0}, {-4.10936975, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ Handle (ImageLabel) - Visible: true - Size: {0.600270212, 0}, {0.597314119, 0} - Position: {0.495000005, 0}, {0.234999999, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300225] [STRUCTURE]       ├─ ApexGradient (UIGradient)
+[1757300225] [STRUCTURE]     ├─ Shine (ImageLabel) - Visible: true - Size: {1.5, 0}, {3, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]     ├─ modal (TextButton) - Visible: true - Size: {0, 0}, {0, 0} - Position: {0, 0}, {0, 0} - Text: '' - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]     ├─ progress (Frame) - Visible: true - Size: {0.538538992, 0}, {0.269269526, 0} - Position: {0.5, 0}, {2.5, 0} - BG Color: 0, 0, 0
+[1757300225] [STRUCTURE]       ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300225] [STRUCTURE]       ├─ stroke (UIStroke)
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ Shine (ImageLabel) - Visible: true - Size: {1.21211648, 0}, {7.13312054, 0} - Position: {0.5, 0}, {-0.446999997, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]       ├─ bar (Frame) - Visible: true - Size: {0.524270535, 0}, {0.99999994, 0} - Position: {0, 0}, {0, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]       ├─ Seraphic (ImageLabel) - Visible: false - Size: {0.359074205, 0}, {17.9537106, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300225] [STRUCTURE]         ├─ UIScale (UIScale)
+[1757300225] [STRUCTURE]     ├─ mobile (ImageLabel) - Visible: false - Size: {0.300144672, 0}, {1.73160481, 0} - Position: {0.499999583, 0}, {-2.50247669, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]       ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300225] [STRUCTURE]       ├─ text (TextLabel) - Visible: true - Size: {5.4131546, 0}, {0.49840045, 0} - Position: {-2.21662331, 0}, {0.696322858, 0} - Text: 'Tap & Hold Anywhere!' - BG Color: 0, 0, 0
+[1757300225] [STRUCTURE]         ├─ UIStroke (UIStroke)
+[1757300225] [STRUCTURE]           ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]     ├─ pc (ImageLabel) - Visible: false - Size: {0.239999995, 0}, {0, 40} - Position: {0.5, 0}, {-2.50200009, 0} - BG Color: 1, 1, 1
+[1757300225] [STRUCTURE]       ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300225] [STRUCTURE]       ├─ text (TextLabel) - Visible: true - Size: {5.4131546, 0}, {0.49840045, 0} - Position: {-2.21662331, 0}, {0.696322858, 0} - Text: 'Click & Hold Anywhere!' - BG Color: 0, 0, 0
+[1757300225] [STRUCTURE]         ├─ UIStroke (UIStroke)
+[1757300225] [STRUCTURE]           ├─ UIGradient (UIGradient)
+[1757300225] [STRUCTURE]     ├─ progressspeed (TextLabel) - Visible: false - Size: {0.494349658, 0}, {0.769073963, 0} - Position: {0.251176506, 0}, {2.86080527, 0} - Text: '-100% Progress Speed' - BG Color: 0, 0, 0
+[1757300225] [STRUCTURE]       ├─ UIStroke (UIStroke)
+[1757300225] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300226] [STRUCTURE]     ├─ zenithChallenge (TextLabel) - Visible: false - Size: {0.494349658, 0}, {0.769073963, 0} - Position: {0.250999987, 0}, {-2, 0} - Text: 'Multation Multiplier: 0.25 | Resilience: 100' - BG Color: 0, 0, 0
+[1757300226] [STRUCTURE]       ├─ UIStroke (UIStroke)
+[1757300226] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300227] [CHILD] PlayerGui gained child: popup (Sound)
+[1757300228] [CHILD] PlayerGui lost child: popup (Sound)
+[1757300236] [CHILD] PlayerGui lost child: reel (ScreenGui)
+[1757300236] [REEL] 🎣 REEL MINIGAME ENDED!
+[1757300236] [EVENT] 📨 dialogstart(table: 0x7d4bc5705125d685, Head, table: 0xf393709b76d4f735)
+[1757300237] [EVENT] 📨 anno_catch(table: 0x03440f77c466e095)
+[1757300240] [EVENT] 📨 dialogstart(table: 0x519fd16a16f83ff5, Head, table: 0xc3764d3bba132d65)
+[1757300245] [EVENT] 📨 dialogstart(table: 0x35d7ae4b02d87445, table: 0xc88fc2bac77749f5)
+[1757300247] [EVENT] 📨 dialogstart(table: 0xd287dd8993870e35, Head, table: 0x4fff69927730d0a5)
+[1757300255] [EVENT] 📨 dialogstart(table: 0xcffaf4dcda7e1fa5, Head, table: 0x41531b41f9c10855)
+[1757300258] [EVENT] 📨 dialogstart(table: 0xe9ccfa5620b88da5, Head, table: 0x936aa67d1c13fe55)
+[1757300259] [EVENT] 📨 dialogstart(table: 0xdf5dc7ea3f591335, Head, table: 0x630470b15940cda5)
+[1757300267] [EVENT] 📨 rod_cast()
+[1757300267] [EVENT] 📨 dialogstart(table: 0x7d74d2f2dec97505, Head, table: 0xf91b679dfa6048b5)
+[1757300267] [EVENT] 📨 chat(table: 0x91340a1384eabff5)
+[1757300268] [CHILD] PlayerGui gained child: shakeui (ScreenGui)
+[1757300272] [EVENT] 📨 dialogstart(table: 0x28cc7bfa042bbe65, Head, table: 0x4071c5307d2a0385)
+[1757300272] [EVENT] 📨 dialogstart(table: 0xf1d7bbc5e377f175, Head, table: 0x848f4ec01ed6f7e5)
+[1757300276] [EVENT] 📨 dialogstart(table: 0x8672e99b6e6db785, Head, table: 0x1e2cb4f4b2dcb635)
+[1757300278] [EVENT] 📨 dialogstart(table: 0xc866c9f1ab2db7c5, table: 0xb43d36de6edc3675)
+[1757300278] [EVENT] 📨 chat(table: 0xe694cef0c4c19335)
+[1757300278] [EVENT] 📨 dialogstart(table: 0xeb3b7c7943984d35, Head, table: 0x6ec0885207311fa5)
+[1757300278] [EVENT] 📨 dialogstart(table: 0xd941e7380eeca455, Head, table: 0x47094b6cc35f96c5)
+[1757300278] [CHILD] PlayerGui lost child: shakeui (ScreenGui)
+[1757300279] [CHILD] PlayerGui gained child: reel (ScreenGui)
+[1757300279] [REEL] 🎣 REEL MINIGAME DETECTED!
+[1757300279] [ANALYZE] 📊 ANALYZING REEL UI STRUCTURE:
+[1757300279] [STRUCTURE] ├─ reel (ScreenGui)
+[1757300279] [STRUCTURE]   ├─ bar (Frame) - Visible: true - Size: {0.403691381, 0}, {0.042634353, 0} - Position: {0.5, 0}, {0.882456064, -20} - BG Color: 0, 0, 0
+[1757300279] [STRUCTURE]     ├─ reel (LocalScript)
+[1757300279] [STRUCTURE]       ├─ rod (ObjectValue)
+[1757300279] [STRUCTURE]       ├─ fish (StringValue)
+[1757300279] [STRUCTURE]       ├─ TridentGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ No-LifeGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ SpinecasterGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ UltratechGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ KatanaGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ PenGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ FabulousGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ zone (StringValue)
+[1757300279] [STRUCTURE]       ├─ MilaGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ LeviathansFangGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ AzureOfLagoonGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ FreeSpiritRodGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ GlobalEventGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ EvilPitchforkGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ PaperFanGradient (UIGradient)
+[1757300279] [STRUCTURE]     ├─ fish (Frame) - Visible: true - Size: {0.00999999978, 0}, {2, 0} - Position: {0.100000001, 0}, {0.458999991, 0} - BG Color: 0.262745, 0.294118, 0.356863
+[1757300279] [STRUCTURE]       ├─ UICorner (UICorner)
+[1757300279] [STRUCTURE]       ├─ stroke (UIStroke)
+[1757300279] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ icon (ImageLabel) - Visible: true - Size: {6.23075819, 0}, {0.778844535, 0} - Position: {0.41823253, 0}, {-0.321537256, 0} - BG Color: 1, 1, 1
+[1757300279] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300279] [STRUCTURE]       ├─ sparkles (ParticleEmitter)
+[1757300279] [STRUCTURE]       ├─ TridentSlash (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300279] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300279] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ TridentSlashEvil (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300279] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ TridentSlashSpinecaster (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300279] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ TridentSlashTetra (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300279] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ TridentSlashKatana (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300279] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ TridentSlashPen (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300279] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ TridentSlashMila (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300279] [STRUCTURE]       ├─ TridentSlashFabulous (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300279] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ LeviathansFangSlash (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300279] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300279] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ AzureOfLagoonSlash (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300279] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300279] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ FreeSpiritRodSlash (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300279] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ TridentSlashPaperFan (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300279] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300279] [STRUCTURE]     ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300279] [STRUCTURE]     ├─ stroke (UIStroke)
+[1757300279] [STRUCTURE]       ├─ UIGradient (UIGradient)
+[1757300279] [STRUCTURE]     ├─ licon (ImageLabel) - Visible: true - Size: {0.0199999996, 0}, {0.5, 0} - Position: {-0.00999999139, 0}, {0.499999762, 0} - BG Color: 1, 1, 1
+[1757300279] [STRUCTURE]     ├─ ricon (ImageLabel) - Visible: true - Size: {0.0199999996, 0}, {0.5, 0} - Position: {1.00999999, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300279] [STRUCTURE]     ├─ playerbar (Frame) - Visible: true - Size: {0.300000012, 0}, {1.29999995, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 0.945098, 0.945098, 0.945098
+[1757300279] [STRUCTURE]       ├─ UICorner (UICorner)
+[1757300279] [STRUCTURE]       ├─ stroke (UIStroke)
+[1757300279] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300279] [STRUCTURE]       ├─ xboxcontrol (ImageLabel) - Visible: false - Size: {0.239999995, 0}, {0, 40} - Position: {0.5, 0}, {-1.60000002, 0} - BG Color: 1, 1, 1
+[1757300279] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300279] [STRUCTURE]       ├─ left (ImageLabel) - Visible: true - Size: {0.166405171, 0}, {0.9600299, 0} - Position: {0.0500000007, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300279] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300280] [STRUCTURE]       ├─ right (ImageLabel) - Visible: true - Size: {0.166405171, 0}, {0.9600299, 0} - Position: {0.949999988, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300280] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300280] [STRUCTURE]       ├─ Rod (ImageLabel) - Visible: true - Size: {1.14047837, 0}, {6.61224604, 0} - Position: {0.5, 0}, {-4.10936975, 0} - BG Color: 1, 1, 1
+[1757300280] [STRUCTURE]         ├─ Handle (ImageLabel) - Visible: true - Size: {0.600270212, 0}, {0.597314119, 0} - Position: {0.495000005, 0}, {0.234999999, 0} - BG Color: 1, 1, 1
+[1757300280] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300280] [STRUCTURE]       ├─ ApexGradient (UIGradient)
+[1757300280] [STRUCTURE]     ├─ Shine (ImageLabel) - Visible: true - Size: {1.5, 0}, {3, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300280] [STRUCTURE]     ├─ modal (TextButton) - Visible: true - Size: {0, 0}, {0, 0} - Position: {0, 0}, {0, 0} - Text: '' - BG Color: 1, 1, 1
+[1757300280] [STRUCTURE]     ├─ progress (Frame) - Visible: true - Size: {0.538538992, 0}, {0.269269526, 0} - Position: {0.5, 0}, {2.5, 0} - BG Color: 0, 0, 0
+[1757300280] [STRUCTURE]       ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300280] [STRUCTURE]       ├─ stroke (UIStroke)
+[1757300280] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300280] [STRUCTURE]       ├─ Shine (ImageLabel) - Visible: true - Size: {1.21211648, 0}, {7.13312054, 0} - Position: {0.5, 0}, {-0.446999997, 0} - BG Color: 1, 1, 1
+[1757300280] [STRUCTURE]       ├─ bar (Frame) - Visible: true - Size: {0.524270535, 0}, {0.99999994, 0} - Position: {0, 0}, {0, 0} - BG Color: 1, 1, 1
+[1757300280] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300280] [STRUCTURE]       ├─ Seraphic (ImageLabel) - Visible: false - Size: {0.359074205, 0}, {17.9537106, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300280] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300280] [STRUCTURE]         ├─ UIScale (UIScale)
+[1757300280] [STRUCTURE]     ├─ mobile (ImageLabel) - Visible: false - Size: {0.300144672, 0}, {1.73160481, 0} - Position: {0.499999583, 0}, {-2.50247669, 0} - BG Color: 1, 1, 1
+[1757300280] [STRUCTURE]       ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300280] [STRUCTURE]       ├─ text (TextLabel) - Visible: true - Size: {5.4131546, 0}, {0.49840045, 0} - Position: {-2.21662331, 0}, {0.696322858, 0} - Text: 'Tap & Hold Anywhere!' - BG Color: 0, 0, 0
+[1757300280] [STRUCTURE]         ├─ UIStroke (UIStroke)
+[1757300280] [STRUCTURE]           ├─ UIGradient (UIGradient)
+[1757300280] [STRUCTURE]     ├─ pc (ImageLabel) - Visible: false - Size: {0.239999995, 0}, {0, 40} - Position: {0.5, 0}, {-2.50200009, 0} - BG Color: 1, 1, 1
+[1757300280] [STRUCTURE]       ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300280] [STRUCTURE]       ├─ text (TextLabel) - Visible: true - Size: {5.4131546, 0}, {0.49840045, 0} - Position: {-2.21662331, 0}, {0.696322858, 0} - Text: 'Click & Hold Anywhere!' - BG Color: 0, 0, 0
+[1757300280] [STRUCTURE]         ├─ UIStroke (UIStroke)
+[1757300280] [STRUCTURE]           ├─ UIGradient (UIGradient)
+[1757300280] [STRUCTURE]     ├─ progressspeed (TextLabel) - Visible: false - Size: {0.494349658, 0}, {0.769073963, 0} - Position: {0.251176506, 0}, {2.86080527, 0} - Text: '-100% Progress Speed' - BG Color: 0, 0, 0
+[1757300280] [STRUCTURE]       ├─ UIStroke (UIStroke)
+[1757300280] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300280] [STRUCTURE]     ├─ zenithChallenge (TextLabel) - Visible: false - Size: {0.494349658, 0}, {0.769073963, 0} - Position: {0.250999987, 0}, {-2, 0} - Text: 'Multation Multiplier: 0.25 | Resilience: 100' - BG Color: 0, 0, 0
+[1757300280] [STRUCTURE]       ├─ UIStroke (UIStroke)
+[1757300280] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300282] [CHILD] PlayerGui gained child: popup (Sound)
+[1757300283] [CHILD] PlayerGui lost child: popup (Sound)
+[1757300284] [EVENT] 📨 dialogstart(table: 0x2ce3feb904538045, Head, table: 0x885a09e2404a65f5)
+[1757300284] [EVENT] 📨 dialogstart(table: 0x0943c54db6e1fdc5, Head, table: 0xad0bd93011bae875)
+[1757300291] [CHILD] PlayerGui lost child: reel (ScreenGui)
+[1757300291] [REEL] 🎣 REEL MINIGAME ENDED!
+[1757300291] [EVENT] 📨 dialogstart(table: 0x6cc0f0903985be25, Head, table: 0x2e5720cac098cce5)
+[1757300292] [EVENT] 📨 anno_catch(table: 0x1e84a01242623505)
+[1757300292] [EVENT] 📨 dialogstart(table: 0x2303b07b71ec8495, Head, table: 0xb6ca4da0921da205)
+[1757300295] [EVENT] 📨 dialogstart(table: 0xba45832e5030ba95, Head, table: 0x22091cd6b349b005)
+[1757300297] [EVENT] 📨 dialogstart(table: 0x28d3d79d2dca80c5, Head, table: 0xb40bc4b8f0a25d75)
+[1757300300] [EVENT] 📨 dialogstart(table: 0xe5fc52a40fde85a5, Head, table: 0x78a64e5f484e6655)
+[1757300308] [SUCCESS] ✅ Log saved to: ReelDebugLog.txt
+[1757300313] [EVENT] 📨 dialogstart(table: 0xf9a749536d005bc5, Head, table: 0x62efdb72299b6a75)
+[1757300320] [EVENT] 📨 dialogstart(table: 0xe9fd423765a89935, Head, table: 0x6654b5f1685373a5)
+[1757300320] [EVENT] 📨 dialogstart(table: 0x4fd8066714c7cda5, Head, table: 0xc42e91ae7850be55)
+[1757300323] [EVENT] 📨 dialogstart(table: 0x1f14dc2a1c98fd35, Head, table: 0xa12b6872f071cfa5)
+[1757300323] [EVENT] 📨 dialogstart(table: 0x9427f6b666196765, Head, table: 0xe8f02b8f2bb64415)
+[1757300323] [EVENT] 📨 dialogstart(table: 0x72cb82c416c3b355, table: 0x0913163fcb2c4dc5)
+[1757300326] [EVENT] 📨 dialogstart(table: 0x1288c6dd5fbee2e5, Head, table: 0x8fd6bbb23cedde95)
+[1757300328] [EVENT] 📨 chat(table: 0x3a4aa7da3bf65fa5)
+[1757300328] [EVENT] 📨 dialogstart(table: 0x4ee008c92e4ad9e5, table: 0xc16997cdea61e795)
+[1757300332] [EVENT] 📨 dialogstart(table: 0x197972ec1bd05845, Head, table: 0x9f1ddfa3bc592df5)
+[1757300335] [EVENT] 📨 rod_cast()
+[1757300336] [CHILD] PlayerGui gained child: shakeui (ScreenGui)
+[1757300338] [EVENT] 📨 dialogstart(table: 0xaa5a81cfed6cb615, Head, table: 0x2a231cd8e99c4485)
+[1757300339] [EVENT] 📨 dialogstart(table: 0xaee574bfebc38ea5, Head, table: 0x35b189c7176cb955)
+[1757300346] [EVENT] 📨 dialogstart(table: 0x5d1be9b4f6402945, Head, table: 0xd7201e918b593cf5)
+[1757300347] [CHILD] PlayerGui lost child: shakeui (ScreenGui)
+[1757300347] [CHILD] PlayerGui gained child: reel (ScreenGui)
+[1757300348] [REEL] 🎣 REEL MINIGAME DETECTED!
+[1757300348] [ANALYZE] 📊 ANALYZING REEL UI STRUCTURE:
+[1757300348] [STRUCTURE] ├─ reel (ScreenGui)
+[1757300348] [STRUCTURE]   ├─ bar (Frame) - Visible: true - Size: {0.403691381, 0}, {0.042634353, 0} - Position: {0.5, 0}, {0.882456064, -20} - BG Color: 0, 0, 0
+[1757300348] [STRUCTURE]     ├─ reel (LocalScript)
+[1757300348] [STRUCTURE]       ├─ rod (ObjectValue)
+[1757300348] [STRUCTURE]       ├─ fish (StringValue)
+[1757300348] [STRUCTURE]       ├─ TridentGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ No-LifeGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ SpinecasterGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ UltratechGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ KatanaGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ PenGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ FabulousGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ zone (StringValue)
+[1757300348] [STRUCTURE]       ├─ MilaGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ LeviathansFangGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ AzureOfLagoonGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ FreeSpiritRodGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ GlobalEventGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ EvilPitchforkGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ PaperFanGradient (UIGradient)
+[1757300348] [STRUCTURE]     ├─ fish (Frame) - Visible: true - Size: {0.00999999978, 0}, {2, 0} - Position: {0.100000001, 0}, {0.458999991, 0} - BG Color: 0.262745, 0.294118, 0.356863
+[1757300348] [STRUCTURE]       ├─ UICorner (UICorner)
+[1757300348] [STRUCTURE]       ├─ stroke (UIStroke)
+[1757300348] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ icon (ImageLabel) - Visible: true - Size: {6.23075819, 0}, {0.778844535, 0} - Position: {0.41823253, 0}, {-0.321537256, 0} - BG Color: 1, 1, 1
+[1757300348] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300348] [STRUCTURE]       ├─ sparkles (ParticleEmitter)
+[1757300348] [STRUCTURE]       ├─ TridentSlash (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300348] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300348] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ TridentSlashEvil (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300348] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ TridentSlashSpinecaster (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300348] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ TridentSlashTetra (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300348] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ TridentSlashKatana (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300348] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ TridentSlashPen (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300348] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ TridentSlashMila (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300348] [STRUCTURE]       ├─ TridentSlashFabulous (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300348] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ LeviathansFangSlash (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300348] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300348] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ AzureOfLagoonSlash (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300348] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300348] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ FreeSpiritRodSlash (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300348] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300348] [STRUCTURE]       ├─ TridentSlashPaperFan (ImageLabel) - Visible: true - Size: {10.1879997, 0}, {2.398, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300348] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300348] [STRUCTURE]     ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300348] [STRUCTURE]     ├─ stroke (UIStroke)
+[1757300348] [STRUCTURE]       ├─ UIGradient (UIGradient)
+[1757300348] [STRUCTURE]     ├─ licon (ImageLabel) - Visible: true - Size: {0.0199999996, 0}, {0.5, 0} - Position: {-0.00999999139, 0}, {0.499999762, 0} - BG Color: 1, 1, 1
+[1757300348] [STRUCTURE]     ├─ ricon (ImageLabel) - Visible: true - Size: {0.0199999996, 0}, {0.5, 0} - Position: {1.00999999, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300348] [STRUCTURE]     ├─ playerbar (Frame) - Visible: true - Size: {0.300000012, 0}, {1.29999995, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 0.945098, 0.945098, 0.945098
+[1757300348] [STRUCTURE]       ├─ UICorner (UICorner)
+[1757300348] [STRUCTURE]       ├─ stroke (UIStroke)
+[1757300348] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300349] [STRUCTURE]       ├─ xboxcontrol (ImageLabel) - Visible: false - Size: {0.239999995, 0}, {0, 40} - Position: {0.5, 0}, {-1.60000002, 0} - BG Color: 1, 1, 1
+[1757300349] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300349] [STRUCTURE]       ├─ left (ImageLabel) - Visible: true - Size: {0.166405171, 0}, {0.9600299, 0} - Position: {0.0500000007, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300349] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300349] [STRUCTURE]       ├─ right (ImageLabel) - Visible: true - Size: {0.166405171, 0}, {0.9600299, 0} - Position: {0.949999988, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300349] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300349] [STRUCTURE]       ├─ Rod (ImageLabel) - Visible: true - Size: {1.14047837, 0}, {6.61224604, 0} - Position: {0.5, 0}, {-4.10936975, 0} - BG Color: 1, 1, 1
+[1757300349] [STRUCTURE]         ├─ Handle (ImageLabel) - Visible: true - Size: {0.600270212, 0}, {0.597314119, 0} - Position: {0.495000005, 0}, {0.234999999, 0} - BG Color: 1, 1, 1
+[1757300349] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300349] [STRUCTURE]       ├─ ApexGradient (UIGradient)
+[1757300349] [STRUCTURE]     ├─ Shine (ImageLabel) - Visible: true - Size: {1.5, 0}, {3, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300349] [STRUCTURE]     ├─ modal (TextButton) - Visible: true - Size: {0, 0}, {0, 0} - Position: {0, 0}, {0, 0} - Text: '' - BG Color: 1, 1, 1
+[1757300349] [STRUCTURE]     ├─ progress (Frame) - Visible: true - Size: {0.538538992, 0}, {0.269269526, 0} - Position: {0.5, 0}, {2.5, 0} - BG Color: 0, 0, 0
+[1757300349] [STRUCTURE]       ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300349] [STRUCTURE]       ├─ stroke (UIStroke)
+[1757300349] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300349] [STRUCTURE]       ├─ Shine (ImageLabel) - Visible: true - Size: {1.21211648, 0}, {7.13312054, 0} - Position: {0.5, 0}, {-0.446999997, 0} - BG Color: 1, 1, 1
+[1757300349] [STRUCTURE]       ├─ bar (Frame) - Visible: true - Size: {0.524270535, 0}, {0.99999994, 0} - Position: {0, 0}, {0, 0} - BG Color: 1, 1, 1
+[1757300349] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300349] [STRUCTURE]       ├─ Seraphic (ImageLabel) - Visible: false - Size: {0.359074205, 0}, {17.9537106, 0} - Position: {0.5, 0}, {0.5, 0} - BG Color: 1, 1, 1
+[1757300349] [STRUCTURE]         ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300349] [STRUCTURE]         ├─ UIScale (UIScale)
+[1757300349] [STRUCTURE]     ├─ mobile (ImageLabel) - Visible: false - Size: {0.300144672, 0}, {1.73160481, 0} - Position: {0.499999583, 0}, {-2.50247669, 0} - BG Color: 1, 1, 1
+[1757300349] [STRUCTURE]       ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300349] [STRUCTURE]       ├─ text (TextLabel) - Visible: true - Size: {5.4131546, 0}, {0.49840045, 0} - Position: {-2.21662331, 0}, {0.696322858, 0} - Text: 'Tap & Hold Anywhere!' - BG Color: 0, 0, 0
+[1757300349] [STRUCTURE]         ├─ UIStroke (UIStroke)
+[1757300349] [STRUCTURE]           ├─ UIGradient (UIGradient)
+[1757300349] [STRUCTURE]     ├─ pc (ImageLabel) - Visible: false - Size: {0.239999995, 0}, {0, 40} - Position: {0.5, 0}, {-2.50200009, 0} - BG Color: 1, 1, 1
+[1757300349] [STRUCTURE]       ├─ UIAspectRatioConstraint (UIAspectRatioConstraint)
+[1757300349] [STRUCTURE]       ├─ text (TextLabel) - Visible: true - Size: {5.4131546, 0}, {0.49840045, 0} - Position: {-2.21662331, 0}, {0.696322858, 0} - Text: 'Click & Hold Anywhere!' - BG Color: 0, 0, 0
+[1757300349] [STRUCTURE]         ├─ UIStroke (UIStroke)
+[1757300349] [STRUCTURE]           ├─ UIGradient (UIGradient)
+[1757300349] [STRUCTURE]     ├─ progressspeed (TextLabel) - Visible: false - Size: {0.494349658, 0}, {0.769073963, 0} - Position: {0.251176506, 0}, {2.86080527, 0} - Text: '-100% Progress Speed' - BG Color: 0, 0, 0
+[1757300349] [STRUCTURE]       ├─ UIStroke (UIStroke)
+[1757300349] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300349] [STRUCTURE]     ├─ zenithChallenge (TextLabel) - Visible: false - Size: {0.494349658, 0}, {0.769073963, 0} - Position: {0.250999987, 0}, {-2, 0} - Text: 'Multation Multiplier: 0.25 | Resilience: 100' - BG Color: 0, 0, 0
+[1757300349] [STRUCTURE]       ├─ UIStroke (UIStroke)
+[1757300349] [STRUCTURE]         ├─ UIGradient (UIGradient)
+[1757300351] [CHILD] PlayerGui gained child: popup (Sound)
+[1757300352] [CHILD] PlayerGui lost child: popup (Sound)
+[1757300352] [EVENT] 📨 anno_top(A strange whirlpool has opened.)
+[1757300352] [EVENT] 📨 dialogstart(table: 0x27eb52c1c9a434f5, Head, table: 0x5d62cf5d14f4da65)
+[1757300353] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300353] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300353] [EVENT] 📨 chat(table: 0x5d40c5923d593525)
+[1757300353] [EVENT] 📨 dialogstart(table: 0xea2508a1a78165f5, Head, table: 0x6229b5ad291a7b65)
+[1757300353] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300353] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300353] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300353] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300354] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300354] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300354] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300354] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300357] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300358] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300358] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300358] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300358] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300358] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300359] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300359] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300359] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300359] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300359] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300359] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300359] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300359] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300359] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300359] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300359] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300359] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300360] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300360] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300360] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300360] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300360] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300360] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300360] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300360] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300360] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300360] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300360] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300360] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300360] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300361] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300361] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300361] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300361] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300361] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300361] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300361] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300361] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300361] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300361] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300361] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300361] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300362] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300362] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300362] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300362] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300362] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300362] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300362] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300362] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300362] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300362] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300363] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300363] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300363] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300363] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300363] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300363] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300363] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300363] [CHILD] PlayerGui gained child: bounce (Sound)
+[1757300363] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300364] [CHILD] PlayerGui lost child: bounce (Sound)
+[1757300364] [CHILD] PlayerGui lost child: reel (ScreenGui)
+[1757300364] [REEL] 🎣 REEL MINIGAME ENDED!
+[1757300364] [EVENT] 📨 dialogstart(table: 0x81bd20e595852a85, Head, table: 0x748453a1763ad335)
+[1757300364] [EVENT] 📨 anno_catch(table: 0x9678c67d7c8751a5)
+[1757300365] [EVENT] 📨 dialogstart(table: 0x6ed81b88d8457155, Head, table: 0xe5728e8d35fb6bc5)
+[1757300365] [EVENT] 📨 dialogstart(table: 0x5bbd97d3c7965055, Head, table: 0xc19500aa8207bac5)
+[1757300366] [EVENT] 📨 dialogstart(table: 0x178f457b9aed9ee5, Head, table: 0xad40d940a59ef295)
+[1757300371] [EVENT] 📨 dialogstart(table: 0x18b72e1d0abe08b5, Head, table: 0xac5ec22a466d2225)
+[1757300374] [EVENT] 📨 dialogstart(table: 0xb2675c4544a846f5, Head, table: 0x3e3fe8481b071465)
+[1757300380] [EVENT] 📨 dialogstart(table: 0x5b0c7516c69080c5, Head, table: 0x9d56233e03585d75)
+[1757300380] [EVENT] 📨 chat(table: 0xc4c1e4b783a0ac05)
+[1757300383] [EVENT] 📨 dialogstart(table: 0x34a9c4c90b0f6105, Head, table: 0x8fe1d1b64d9e7cb5)
+[1757300387] [EVENT] 📨 dialogstart(table: 0xbd27c0b4e9362135, Head, table: 0xbb7fb59f2dc2bba5)
+[1757300388] [EVENT] 📨 dialogstart(table: 0x0c3cca156e4a8115, Head, table: 0x90db66722be5ff85)
+[1757300394] [EVENT] 📨 chat(table: 0x5f9742b3bda483f5)
+[1757300394] [EVENT] 📨 dialogstart(table: 0x2f2d1bcd50271c85, table: 0x009de17fe950c3a5)
+[1757300397] [EVENT] 📨 anno_top(There is an abundance of <font color = '#a1ffa9'><b>Amberjack</b></font> in the <font color = '#b3edff'>Ocean</font>!)
+[1757300397] [EVENT] 📨 chat(table: 0xb6598d8c20bca595)
+[1757300398] [EVENT] 📨 dialogstart(table: 0x6760498f94a46a85, Head, table: 0x4a95139e1d954da5)
+[1757300398] [EVENT] 📨 anno_serverEvent(A <font color="#FF0000">Mosslurker</font> has been spotted near <font color="#FF0000">Grand Reef</font>!, 10, meg)
+[1757300398] [EVENT] 📨 anno_serverEvent([Catch rare fish while they're still around!])
+[1757300398] [EVENT] 📨 chat(table: 0xf9085c4df90869a5)
+[1757300401] [EVENT] 📨 dialogstart(table: 0xc29d44091e6548c5, Head, table: 0x5e49d00222d41575)
+[1757300402] [EVENT] 📨 chat(table: 0x5ce3b4dd8a4d7cf5)
+[1757300402] [EVENT] 📨 dialogstart(table: 0x02c4b95634b8b785, table: 0x8d8ae5319861b635)
+[1757300403] [EVENT] 📨 chat(table: 0x1d3ac4edcf0e1405)
+[1757300405] [EVENT] 📨 dialogstart(table: 0x6192c3011d2b3945, Head, table: 0xfae8573a31c02cf5)
+[1757300406] [SUCCESS] ✅ Log saved to: ReelDebugLog.txt
+[1757300408] [EVENT] 📨 chat(table: 0x11d894ef1d88da75)
+[1757300421] [EVENT] 📨 dialogstart(table: 0x5e698a79626ceb55, Head, table: 0xe2211a5d66bf85c5)
+[1757300421] [EVENT] 📨 chat(table: 0xae7acab5e96c02c5)
+[1757300425] [EVENT] 📨 dialogstart(table: 0x2da8d64dcebad9d5, Head, table: 0xb72166408bf38345)
+[1757300425] [EVENT] 📨 dialogstart(table: 0x49dadddd18413e55, Head, table: 0xc404c2327c5800c5)
+[1757300426] [EVENT] 📨 dialogstart(table: 0x40649866d67238d5, Head, table: 0xdc33045d0acb3245)
+[1757300427] [EVENT] 📨 dialogstart(table: 0x9d7bb9255349a455, Head, table: 0xa4c89113540bf775)
+[1757300440] [EVENT] 📨 chat(table: 0x404380c22c1145c5)
+[1757300442] [EVENT] 📨 dialogstart(table: 0x0d9df04326f7a025, Head, table: 0x96464478ab868bd5)
+[1757300443] [EVENT] 📨 dialogstart(table: 0x5e698a79626ceb55, Head, table: 0xe2211a5d66bf85c5)
+[1757300447] [EVENT] 📨 dialogstart(table: 0x8055a6ea6cce5db5, Head, table: 0x0c020ba2a1bf6f25)
+[1757300459] [EVENT] 📨 dialogstart(table: 0x7f5ec50b8dc5ac65, Head, table: 0xfab4d90ac8b43b15)

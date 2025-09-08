@@ -355,6 +355,17 @@ function createMainUI(Library, autofarm)
         end
     end)
     
+    -- Random Delay Toggle (NEW)
+    AutofarmSection:NewToggle("Random Delay", "Enable human-like random delays for anti-detection", function(state)
+        autofarm.setRandomDelay(state)
+        if state then
+            print("Random Delay: Enabled - All delays now randomized")
+            print("Cast: 1.4-2.6s | Shake: 0.15-0.45s | Reel: 0.06-0.14s")
+        else
+            print("Random Delay: Disabled - Fixed delays restored")
+        end
+    end)
+    
     -- Quick Actions Section
     local QuickSection = AutofarmTab:NewSection("Quick Actions")
     
@@ -376,6 +387,7 @@ function createMainUI(Library, autofarm)
         print("Auto Shake: " .. tostring(status.autoShake))
         print("Auto Reel: " .. tostring(status.autoReel))
         print("Always Catch: " .. tostring(status.alwaysCatch))
+        print("Random Delay: " .. tostring(status.randomDelay))
         print("Cast Mode: " .. tostring(status.castMode))
         print("Shake Mode: " .. tostring(status.shakeMode))
         print("=====================")
