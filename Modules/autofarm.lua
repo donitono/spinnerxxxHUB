@@ -340,14 +340,36 @@ function autofarm.startAutoReel()
     
     -- Start advanced reel automation if available
     local success, advancedReel = pcall(function()
+        -- Try GitHub first (for Roblox), then fallback methods
         return loadstring(game:HttpGet("https://raw.githubusercontent.com/donitono/spinnerxxxHUB/main/Modules/auto-reel-advanced.lua"))()
     end)
     
+    -- Fallback: try alternative loading methods
+    if not success then
+        success, advancedReel = pcall(function()
+            -- Alternative URL or cache
+            return require(game:GetService("ReplicatedStorage"):WaitForChild("AutoReelAdvanced", 5))
+        end)
+    end
+    
     if success and advancedReel then
         -- Use advanced reel system ONLY (no old methods)
-        advancedReel.start()
-        print("🎣 Auto Reel: Advanced minigame automation enabled (Natural Gameplay Mode)")
-        print("🎣 Auto Reel: Old instant-completion methods disabled")
+        print("🎣 Auto Reel: Loading Advanced Auto Reel module...")
+        
+        -- Enable debug mode for troubleshooting
+        if advancedReel.setDebugMode then
+            advancedReel.setDebugMode(true)
+        end
+        
+        -- Start the advanced auto reel
+        if advancedReel.start then
+            advancedReel.start()
+            print("🎣 Auto Reel: Advanced minigame automation enabled (Natural Gameplay Mode)")
+            print("🎣 Auto Reel: Will automatically play reel minigames when detected")
+        else
+            warn("🎣 Auto Reel: Advanced module loaded but start() function missing")
+        end
+        
         autofarm.advancedReel = advancedReel
         
         -- Disable old auto reel methods to prevent conflicts
