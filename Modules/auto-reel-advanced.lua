@@ -153,15 +153,13 @@ local function simulateInput(action, duration, urgency)
     urgency = urgency or "normal"
     
     if action == "hold" then
-        -- Use mouse click and hold method for reel minigame
-        local VirtualInputManager = game:GetService("VirtualInputManager")
-        
-        -- Start holding (mouse down)
-        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-        
+        -- Use Space key for reel minigame (proven method)
         if autoReel.debugMode then
-            print("🎣 Auto Reel: Holding for " .. tostring(duration) .. "s")
+            print("🎣 Auto Reel: Holding Space for " .. tostring(duration) .. "s")
         end
+        
+        -- Start holding Space key
+        UserInputService:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
         
         -- Realistic duration with natural variation
         local actualDuration = duration + randomDelay(-0.05, 0.05)
@@ -169,26 +167,24 @@ local function simulateInput(action, duration, urgency)
         spawn(function()
             wait(actualDuration)
             if autoReel.enabled and autoReel.allowedToPlay then
-                -- Release mouse
-                VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
+                -- Release Space key
+                UserInputService:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
                 if autoReel.debugMode then
-                    print("🎣 Auto Reel: Released")
+                    print("🎣 Auto Reel: Released Space")
                 end
             end
         end)
         
     elseif action == "tap" then
         -- Quick tap for fine adjustments
-        local VirtualInputManager = game:GetService("VirtualInputManager")
+        if autoReel.debugMode then
+            print("🎣 Auto Reel: Quick Space tap")
+        end
         
-        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+        UserInputService:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
         local tapDuration = randomDelay(0.08, 0.15) -- Natural tap duration
         wait(tapDuration)
-        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
-        
-        if autoReel.debugMode then
-            print("🎣 Auto Reel: Quick tap")
-        end
+        UserInputService:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
     end
 end
 
@@ -274,49 +270,38 @@ local function handleReelMinigame(reelGui)
         end
         
         if needsMovement then
-            -- Natural response system with realistic timing
+            -- Simple and proven method: hold space when fish is away
             local reactionDelay = randomDelay(CONFIG.reactionTime.min, CONFIG.reactionTime.max)
-            local holdTime = math.clamp(distance * 1.5, CONFIG.holdDuration.min, CONFIG.holdDuration.max)
+            local holdTime = math.clamp(distance * 2, CONFIG.holdDuration.min, CONFIG.holdDuration.max)
             
-            -- Modify based on behavior for realism
-            if behavior == "miss" then
-                holdTime = holdTime * 0.7 -- Shorter hold (intentional miss)
-                if autoReel.debugMode then
-                    print("🎣 Auto Reel: Intentional slight miss")
-                end
-            elseif behavior == "overcompensate" then
-                holdTime = holdTime * 1.4 -- Longer hold (overcompensate)
-                if autoReel.debugMode then
-                    print("🎣 Auto Reel: Overcompensating movement")
-                end
+            if autoReel.debugMode then
+                print(string.format("🎣 Moving to fish: distance %.3f, holding %.2fs", distance, holdTime))
             end
             
-            -- Execute movement with natural delays
+            -- Execute movement
             spawn(function()
                 wait(reactionDelay)
                 if autoReel.enabled and autoReel.allowedToPlay then
                     simulateInput("hold", holdTime, urgency)
-                    
-                    -- Natural wait before next action
-                    local nextDelay = holdTime + randomDelay(CONFIG.releaseDelay.min, CONFIG.releaseDelay.max)
-                    wait(nextDelay)
                 end
             end)
             
             -- Prevent rapid inputs
-            wait(randomDelay(0.1, 0.25))
+            wait(holdTime + 0.1)
         else
-            -- Fine adjustments with realistic frequency
-            if distance > 0.01 and math.random() < 0.3 then -- 30% chance for adjustment
+            -- Small adjustments when close
+            if distance > 0.02 and math.random() < 0.4 then -- 40% chance for small adjustment
+                if autoReel.debugMode then
+                    print("🎣 Fine adjustment tap")
+                end
                 simulateInput("tap", nil, "normal")
-                wait(randomDelay(0.2, 0.5))
+                wait(randomDelay(0.3, 0.6))
             end
         end
         
         -- Natural update frequency (not too fast)
         wait(CONFIG.updateFrequency)
     end)
-end
 end
 
 -- Start auto reel
@@ -326,12 +311,14 @@ function autoReel.start()
     end
     
     autoReel.enabled = true
+    print("🎣 Auto Reel: Starting and monitoring for reel minigames...")
     
     -- Monitor for reel minigame
     autoReel.inputConnection = player.PlayerGui.ChildAdded:Connect(function(child)
         if child.Name == "reel" and child:IsA("ScreenGui") then
+            print("🎣 Auto Reel: Reel minigame detected!")
             -- Small delay to let UI fully load
-            wait(0.1)
+            wait(0.2)
             handleReelMinigame(child)
         end
     end)
@@ -339,10 +326,11 @@ function autoReel.start()
     -- Check if reel is already active
     local existingReel = player.PlayerGui:FindFirstChild("reel")
     if existingReel then
+        print("🎣 Auto Reel: Found existing reel minigame!")
         handleReelMinigame(existingReel)
     end
     
-    print("🎣 Auto Reel: Started (Human-like behavior)")
+    print("🎣 Auto Reel: Monitoring active - waiting for reel minigames...")
 end
 
 -- Stop auto reel
