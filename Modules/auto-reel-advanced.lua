@@ -7,7 +7,27 @@ local autoReel = {}
 -- Services
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("-- Toggle debug mode
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
+-- Variables
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- Auto Reel States
+autoReel.enabled = false
+autoReel.humanLike = true
+autoReel.debugMode = true -- Enable debug by default for troubleshooting
+autoReel.currentConnection = nil
+autoReel.inputConnection = nil
+autoReel.aggressiveMode = false -- Default to balanced mode
+autoReel.lastFishPosition = 0 -- Track fish movement
+autoReel.fishVelocity = 0 -- Predict fish movement
+autoReel.gameStartTime = 0 -- Track when minigame started
+autoReel.lastProgressCheck = 0 -- Track progress building
+autoReel.allowedToPlay = false -- Control when to start playing
+
+-- Toggle debug mode
 function autoReel.setDebugMode(enabled)
     autoReel.debugMode = enabled
     print("🎣 Auto Reel Debug: " .. (enabled and "Enabled" or "Disabled"))
@@ -28,25 +48,7 @@ function autoReel.getStatus()
         aggressiveMode = autoReel.aggressiveMode,
         fishVelocity = autoReel.fishVelocity
     }
-endrvice")
-local TweenService = game:GetService("TweenService")
-
--- Variables
-local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-
--- Auto Reel States
-autoReel.enabled = false
-autoReel.humanLike = true
-autoReel.debugMode = false
-autoReel.currentConnection = nil
-autoReel.inputConnection = nil
-autoReel.aggressiveMode = false -- Default to balanced mode
-autoReel.lastFishPosition = 0 -- Track fish movement
-autoReel.fishVelocity = 0 -- Predict fish movement
-autoReel.gameStartTime = 0 -- Track when minigame started
-autoReel.lastProgressCheck = 0 -- Track progress building
-autoReel.allowedToPlay = false -- Control when to start playing
+end
 
 -- Configuration (Balanced for natural gameplay)
 local CONFIG = {
@@ -144,16 +146,22 @@ local function calculateMovement(fish, playerbar, progress)
     return needsMovement, direction, absDistance, currentProgress, behavior, urgency
 end
 
--- Natural input simulation with realistic timing
+-- Natural input simulation with realistic timing  
 local function simulateInput(action, duration, urgency)
     if not autoReel.enabled or not autoReel.allowedToPlay then return end
     
-    local VirtualInputManager = game:GetService("VirtualInputManager")
     urgency = urgency or "normal"
     
     if action == "hold" then
-        -- Natural hold timing
-        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, player, 0)
+        -- Use mouse click and hold method for reel minigame
+        local VirtualInputManager = game:GetService("VirtualInputManager")
+        
+        -- Start holding (mouse down)
+        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+        
+        if autoReel.debugMode then
+            print("🎣 Auto Reel: Holding for " .. tostring(duration) .. "s")
+        end
         
         -- Realistic duration with natural variation
         local actualDuration = duration + randomDelay(-0.05, 0.05)
@@ -161,15 +169,26 @@ local function simulateInput(action, duration, urgency)
         spawn(function()
             wait(actualDuration)
             if autoReel.enabled and autoReel.allowedToPlay then
-                VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, player, 0)
+                -- Release mouse
+                VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
+                if autoReel.debugMode then
+                    print("🎣 Auto Reel: Released")
+                end
             end
         end)
         
     elseif action == "tap" then
-        -- Quick tap with natural timing
-        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, player, 0)
-        wait(randomDelay(0.08, 0.15)) -- Natural tap duration
-        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, player, 0)
+        -- Quick tap for fine adjustments
+        local VirtualInputManager = game:GetService("VirtualInputManager")
+        
+        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+        local tapDuration = randomDelay(0.08, 0.15) -- Natural tap duration
+        wait(tapDuration)
+        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
+        
+        if autoReel.debugMode then
+            print("🎣 Auto Reel: Quick tap")
+        end
     end
 end
 
@@ -181,9 +200,7 @@ local function handleReelMinigame(reelGui)
         return
     end
     
-    if autoReel.debugMode then
-        print("🎣 Auto Reel: Minigame detected, starting natural gameplay...")
-    end
+    print("🎣 Auto Reel: Minigame detected, starting natural gameplay...")
     
     -- Initialize game timing
     autoReel.gameStartTime = tick()
@@ -194,9 +211,7 @@ local function handleReelMinigame(reelGui)
     spawn(function()
         wait(randomDelay(0.3, 0.8)) -- Natural start delay
         autoReel.allowedToPlay = true
-        if autoReel.debugMode then
-            print("🎣 Auto Reel: Starting to play...")
-        end
+        print("🎣 Auto Reel: Starting to play...")
     end)
     
     -- Main automation loop
@@ -258,7 +273,6 @@ local function handleReelMinigame(reelGui)
             return
         end
         
-        if needsMovement then
         if needsMovement then
             -- Natural response system with realistic timing
             local reactionDelay = randomDelay(CONFIG.reactionTime.min, CONFIG.reactionTime.max)
