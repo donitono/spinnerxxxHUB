@@ -344,67 +344,20 @@ function autofarm.startAutoReel()
     end)
     
     if success and advancedReel then
-        -- Use advanced reel system
+        -- Use advanced reel system ONLY (no old methods)
         advancedReel.start()
-        print("🎣 Auto Reel: Advanced minigame automation enabled")
+        print("🎣 Auto Reel: Advanced minigame automation enabled (Natural Gameplay Mode)")
+        print("🎣 Auto Reel: Old instant-completion methods disabled")
         autofarm.advancedReel = advancedReel
+        
+        -- Disable old auto reel methods to prevent conflicts
+        autoReelRunning = false
+        print("🎣 Auto Reel: Legacy auto reel methods disabled to prevent instant completion")
     else
-        -- Fallback to basic method
-        spawn(function()
-            while autofarm.autoReelEnabled do
-                local success, err = pcall(function()
-                    -- Method dari sanhub
-                    local playerGui = player:WaitForChild("PlayerGui")
-                    local reel = playerGui:FindFirstChild("reel")
-                    
-                    if reel then
-                        local bar = reel:FindFirstChild("bar")
-                        if bar and bar.Visible then
-                            -- Auto reel ketika bar muncul
-                            local reelEventDelay = getRandomDelay(0.05, 70) -- 0.05±70% = 0.015-0.085 seconds
-                            task.wait(reelEventDelay)
-                            
-                            local reelEvent = ReplicatedStorage:FindFirstChild("events")
-                            if reelEvent then
-                                local reelAction = reelEvent:FindFirstChild("reelfinished")
-                                if reelAction then
-                                    reelAction:FireServer(100, true) -- Perfect reel
-                                end
-                            end
-                            
-                            -- Alternative method - simulate space key press
-                            local keyPressDelay = getRandomDelay(0.05, 60) -- 0.05±60% = 0.02-0.08 seconds
-                            UserInputService:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
-                            wait(keyPressDelay)
-                            UserInputService:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
-                        end
-                    end
-                    
-                    -- Backup method - check for reel prompt
-                    local reelPrompt = playerGui:FindFirstChild("ReelPrompt")
-                    if reelPrompt and reelPrompt.Visible then
-                        local promptDelay = getRandomDelay(0.08, 60) -- 0.08±60% = 0.032-0.128 seconds
-                        task.wait(promptDelay)
-                        
-                        local reelEvent = ReplicatedStorage:FindFirstChild("events")
-                        if reelEvent then
-                            local reel = reelEvent:FindFirstChild("reel")
-                            if reel then
-                                reel:FireServer()
-                            end
-                        end
-                    end
-                end)
-                
-                if not success then
-                    warn("Auto Reel Error: " .. tostring(err))
-                end
-                
-                local loopDelay = getRandomDelay(0.1, 40) -- 0.1±40% = 0.06-0.14 seconds
-                wait(loopDelay)
-            end
-        end)
-        print("🎣 Auto Reel: Basic automation enabled")
+        warn("🎣 Auto Reel: Failed to load Advanced Auto Reel module: " .. tostring(advancedReel))
+        print("🎣 Auto Reel: Advanced Auto Reel module is required for natural gameplay")
+        autofarm.autoReelEnabled = false
+        return
     end
 end
 
