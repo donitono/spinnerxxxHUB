@@ -85,7 +85,9 @@ function autofarm.startAutoCast(mode)
                         end
                         
                     elseif autofarm.castMode == 2 then
-                        -- Mode 2: Rage - direct FireServer
+                        -- Mode 2: Rage - direct FireServer with random delay
+                        local rageDelay = getRandomDelay(0.2, 100) -- 0.2±100% = 0.1-0.4 seconds
+                        task.wait(rageDelay) -- Small random delay even for rage mode
                         castEvent:FireServer(100)
                         
                     elseif autofarm.castMode == 3 then
@@ -164,7 +166,9 @@ function autofarm.startAutoCast(mode)
                             end
                             
                         elseif autofarm.castMode == 2 then
-                            -- Rage mode recast
+                            -- Rage mode recast with random delay
+                            local rageRecastDelay = getRandomDelay(0.3, 80) -- 0.3±80% = 0.15-0.55 seconds
+                            task.wait(rageRecastDelay)
                             castEvent:FireServer(100)
                             
                         elseif autofarm.castMode == 3 then
@@ -246,6 +250,10 @@ function autofarm.startAutoShake(mode)
                     if safezone then
                         local button = safezone:FindFirstChild("button")
                         if button then
+                            -- Add random delay even for SanHub method
+                            local shakeDelay = getRandomDelay(0.05, 80) -- 0.05±80% = 0.01-0.09 seconds
+                            task.wait(shakeDelay)
+                            
                             -- Set selected object dan send return key
                             game:GetService("GuiService").SelectedObject = button
                             if game:GetService("GuiService").SelectedObject == button then
@@ -341,6 +349,9 @@ function autofarm.startAutoReel()
                     local bar = reel:FindFirstChild("bar")
                     if bar and bar.Visible then
                         -- Auto reel ketika bar muncul
+                        local reelEventDelay = getRandomDelay(0.05, 70) -- 0.05±70% = 0.015-0.085 seconds
+                        task.wait(reelEventDelay)
+                        
                         local reelEvent = ReplicatedStorage:FindFirstChild("events")
                         if reelEvent then
                             local reelAction = reelEvent:FindFirstChild("reelfinished")
@@ -360,6 +371,9 @@ function autofarm.startAutoReel()
                 -- Backup method - check for reel prompt
                 local reelPrompt = playerGui:FindFirstChild("ReelPrompt")
                 if reelPrompt and reelPrompt.Visible then
+                    local promptDelay = getRandomDelay(0.08, 60) -- 0.08±60% = 0.032-0.128 seconds
+                    task.wait(promptDelay)
+                    
                     local reelEvent = ReplicatedStorage:FindFirstChild("events")
                     if reelEvent then
                         local reel = reelEvent:FindFirstChild("reel")

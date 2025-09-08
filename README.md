@@ -27,6 +27,17 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/donitono/spinnerxxxHU
 - **Auto Reel** - Perfect reel otomatis
 - **Always Catch** - Tidak pernah kehilangan ikan
 
+### 🤖 **Random Delay System**
+- **Human-like Behavior** - All actions use randomized delays
+- **Anti-Detection** - Prevents pattern recognition
+- **All Modes Supported**:
+  - Cast Mode 1 (Legit): 1.4-2.6s random delays
+  - Cast Mode 2 (Rage): 0.1-0.4s random delays  
+  - Cast Mode 3 (Random): 1.2-2.8s random delays
+  - Shake Mode 1 (SanHub): 0.01-0.09s random delays
+  - Shake Mode 2 (NeoxHub): 0.15-0.45s random delays
+  - Auto Reel: 0.015-0.128s random delays
+
 ### 👤 **Player Features**
 - Walkspeed modifier
 - Jump power modifier
