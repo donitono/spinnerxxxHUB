@@ -275,10 +275,173 @@ local function loadSuperHub()
     return true
 end
 
+-- Create floating button for minimized state
+local function createFloatingButton(restoreCallback)
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "SuperHubFloatingButton"
+    screenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+    screenGui.ResetOnSpawn = false
+    
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0, 60, 0, 60)
+    frame.Position = UDim2.new(1, -80, 0.5, -30)
+    frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    frame.BorderSizePixel = 0
+    frame.Parent = screenGui
+    frame.Active = true
+    frame.Draggable = true
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 30)
+    corner.Parent = frame
+    
+    local gradient = Instance.new("UIGradient")
+    gradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 162, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 120, 200))
+    })
+    gradient.Rotation = 45
+    gradient.Parent = frame
+    
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(1, 0, 1, 0)
+    button.BackgroundTransparency = 1
+    button.Text = "SH"
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.TextScaled = true
+    button.Font = Enum.Font.GothamBold
+    button.Parent = frame
+    
+    local shadow = Instance.new("Frame")
+    shadow.Size = UDim2.new(1, 4, 1, 4)
+    shadow.Position = UDim2.new(0, -2, 0, 2)
+    shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    shadow.BackgroundTransparency = 0.5
+    shadow.ZIndex = frame.ZIndex - 1
+    shadow.Parent = frame
+    
+    local shadowCorner = Instance.new("UICorner")
+    shadowCorner.CornerRadius = UDim.new(0, 30)
+    shadowCorner.Parent = shadow
+    
+    -- Hover effects
+    local isHovering = false
+    
+    button.MouseEnter:Connect(function()
+        isHovering = true
+        local tween = TweenService:Create(frame, 
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {Size = UDim2.new(0, 70, 0, 70)}
+        )
+        tween:Play()
+        
+        button.Text = "SUPER\nHUB"
+        button.TextScaled = false
+        button.TextSize = 8
+    end)
+    
+    button.MouseLeave:Connect(function()
+        isHovering = false
+        wait(0.1)
+        if not isHovering then
+            local tween = TweenService:Create(frame,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {Size = UDim2.new(0, 60, 0, 60)}
+            )
+            tween:Play()
+            
+            button.Text = "SH"
+            button.TextScaled = true
+        end
+    end)
+    
+    button.MouseButton1Click:Connect(function()
+        -- Animate button click
+        local clickTween = TweenService:Create(frame,
+            TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+            {Size = UDim2.new(0, 55, 0, 55)}
+        )
+        clickTween:Play()
+        
+        clickTween.Completed:Connect(function()
+            local returnTween = TweenService:Create(frame,
+                TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {Size = UDim2.new(0, 60, 0, 60)}
+            )
+            returnTween:Play()
+        end)
+        
+        -- Restore UI
+        if restoreCallback then
+            restoreCallback()
+        end
+        screenGui:Destroy()
+    end)
+    
+    -- Notification
+    spawn(function()
+        wait(2)
+        local notification = Instance.new("TextLabel")
+        notification.Size = UDim2.new(0, 150, 0, 30)
+        notification.Position = UDim2.new(0, -155, 0.5, -15)
+        notification.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        notification.BackgroundTransparency = 0.1
+        notification.BorderSizePixel = 0
+        notification.Text = "Click to restore UI"
+        notification.TextColor3 = Color3.fromRGB(255, 255, 255)
+        notification.TextScaled = true
+        notification.Font = Enum.Font.Gotham
+        notification.Parent = frame
+        
+        local notifCorner = Instance.new("UICorner")
+        notifCorner.CornerRadius = UDim.new(0, 5)
+        notifCorner.Parent = notification
+        
+        -- Fade in notification
+        notification.BackgroundTransparency = 1
+        notification.TextTransparency = 1
+        
+        local fadeIn = TweenService:Create(notification,
+            TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundTransparency = 0.1, TextTransparency = 0}
+        )
+        fadeIn:Play()
+        
+        -- Fade out after 3 seconds
+        wait(3)
+        local fadeOut = TweenService:Create(notification,
+            TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundTransparency = 1, TextTransparency = 1}
+        )
+        fadeOut:Play()
+        
+        fadeOut.Completed:Connect(function()
+            notification:Destroy()
+        end)
+    end)
+    
+    return screenGui
+end
+
 -- Create main UI function
 function createMainUI(Library, autofarm)
     -- Create Main Window
     local Window = Library.CreateLib("SUPER HUB v" .. SCRIPT_INFO.version, "DarkTheme")
+    
+    -- Store window reference for minimize/restore
+    local isMinimized = false
+    local windowGui = nil
+    
+    -- Find the main window GUI
+    spawn(function()
+        wait(1) -- Wait for UI to be created
+        for _, gui in pairs(Players.LocalPlayer.PlayerGui:GetChildren()) do
+            if gui.Name:lower():find("kavo") or gui.Name:lower():find("lib") then
+                windowGui = gui
+                break
+            end
+        end
+    end)
     
     -- Autofarm Tab
     local AutofarmTab = Window:NewTab("🎣 Autofarm")
@@ -507,6 +670,66 @@ function createMainUI(Library, autofarm)
             print("GitHub link copied to clipboard!")
         else
             print("GitHub: " .. SCRIPT_INFO.repository)
+        end
+    end)
+    
+    -- UI Control Section
+    local UIControlSection = CreditsTab:NewSection("UI Control")
+    
+    UIControlSection:NewButton("Minimize UI", "Hide UI and show floating button", function()
+        if not isMinimized and windowGui then
+            isMinimized = true
+            
+            -- Hide main window with animation
+            local hideTween = TweenService:Create(windowGui,
+                TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+                {
+                    Size = UDim2.new(0, 0, 0, 0),
+                    Position = UDim2.new(0.5, 0, 0.5, 0)
+                }
+            )
+            hideTween:Play()
+            
+            hideTween.Completed:Connect(function()
+                windowGui.Enabled = false
+                
+                -- Create floating button
+                createFloatingButton(function()
+                    if windowGui then
+                        windowGui.Enabled = true
+                        isMinimized = false
+                        
+                        -- Restore window with animation
+                        local showTween = TweenService:Create(windowGui,
+                            TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                            {
+                                Size = UDim2.new(0, 500, 0, 400), -- Adjust size as needed
+                                Position = UDim2.new(0.5, -250, 0.5, -200)
+                            }
+                        )
+                        showTween:Play()
+                        
+                        print("SUPER HUB UI restored!")
+                    end
+                end)
+            end)
+            
+            print("SUPER HUB UI minimized - Click floating button to restore")
+        else
+            print("UI is already minimized or not found")
+        end
+    end)
+    
+    UIControlSection:NewButton("Reset UI Position", "Reset UI to center of screen", function()
+        if windowGui then
+            local resetTween = TweenService:Create(windowGui,
+                TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {
+                    Position = UDim2.new(0.5, -250, 0.5, -200)
+                }
+            )
+            resetTween:Play()
+            print("UI position reset to center")
         end
     end)
 end
