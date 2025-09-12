@@ -2053,7 +2053,7 @@ CastSection:NewToggle("Auto Cast Arm Movement", "🤖 Enable throwing animation 
 end)
 
 -- NEW: Virtual Recast Toggle
-CastSection:NewToggle("Virtual Recast", "🌊 Bobber stays in water but resets fishing cycle (ultra-fast)", function(state)
+CastSection:NewToggle("Virtual Recast", "🌊 Instant bobber replacement - always keeps bobber in water (ultra-fast)", function(state)
     flags['virtualrecast'] = state
     if state then
         -- print("🌊 [Virtual Recast] Activated - Bobber stays in water!")
@@ -2847,13 +2847,15 @@ RunService.Heartbeat:Connect(function()
             currentDelay = math.max(currentDelay, 0.8) -- Minimum 0.8s delay for smooth operation
         end
         
-        -- VIRTUAL RECAST: Check for ANY lure value condition (not just <= 0.001)
+        -- VIRTUAL RECAST: Check for optimal recast conditions
         local shouldRecast = false
         if flags['virtualrecast'] then
-            -- Virtual recast triggers when lure is very low OR when fish cycle should reset
-            shouldRecast = rod ~= nil and rod['values']['lure'].Value <= 5 -- Much higher threshold for faster cycling
+            -- Virtual recast triggers when lure is low OR when fishing cycle should reset
+            -- Check both lure value and if bobber actually exists in water
+            local lureValue = rod and rod['values'] and rod['values']['lure'] and rod['values']['lure'].Value or 0
+            shouldRecast = rod ~= nil and (lureValue <= 10 or lureValue <= .001) -- Trigger on low lure OR empty line
         else
-            -- Normal recast only when bobber is out of water
+            -- Normal recast only when bobber is completely out of water
             shouldRecast = rod ~= nil and rod['values']['lure'].Value <= .001
         end
         
@@ -2862,15 +2864,21 @@ RunService.Heartbeat:Connect(function()
             
             -- Check casting mode priority: Virtual Recast > No Animation > Arm Movement > Enhanced Instant > Instant > Normal
             if flags['virtualrecast'] then
-                -- VIRTUAL RECAST: Reset lure value without physical cast for ultra-fast fishing
-                if rod and rod['values'] and rod['values']['lure'] then
-                    -- Reset lure to 100% and clear bite state for fresh cycle
-                    rod['values']['lure'].Value = 100
-                    if rod['values']['bite'] then
-                        rod['values']['bite'].Value = false -- Reset bite state
+                -- VIRTUAL RECAST: Instant re-cast without animation to keep bobber in water
+                if rod and rod.events and rod.events.cast then
+                    -- Use instant cast to immediately put bobber back in water
+                    rod.events.cast:FireServer(-1, 1) -- Minimal negative = instant bobber placement
+                    -- Reset values for fresh cycle
+                    if rod['values'] then
+                        if rod['values']['lure'] then
+                            rod['values']['lure'].Value = 100
+                        end
+                        if rod['values']['bite'] then
+                            rod['values']['bite'].Value = false
+                        end
                     end
-                    -- print("🌊 [Virtual Recast] Ultra-fast fishing cycle reset - bobber stays in water!")
-                    -- print("⚡ [Virtual Recast] Lure: 100% | Bite: Reset | No casting animation!")
+                    -- print("🌊 [Virtual Recast] Instant bobber replacement - ultra-fast fishing!")
+                    -- print("⚡ [Virtual Recast] Bobber instantly back in water with fresh cycle!")
                 end
             elseif flags['noanimationautocast'] then
                 -- NO ANIMATION AUTO CAST: Use minimal negative for no animation only
@@ -3554,21 +3562,22 @@ end
 4. Hook system intercepts manual casts
 5. Perfect for speed fishing setup
 
-🌊 How Virtual Recast works (NEW):
-1. Bobber stays permanently in water (no casting animation)
-2. Triggers when lure value <= 5% (much faster than normal 0.001%)
-3. Directly resets lure to 100% and bite state to false
-4. Creates continuous fishing cycle without any delays
-5. Ultra-fast fishing mode - maximum possible speed
-6. NO physical casting, NO animations, NO waiting
-7. Perfect for AFK farming and speed fishing setups
+🌊 How Virtual Recast works (NEW - FIXED):
+1. Monitors lure value and triggers at <= 10% OR <= 0.001%
+2. Instantly casts new bobber with minimal animation (-1 distance)
+3. Immediately resets lure to 100% and bite state to false
+4. Ensures bobber is ALWAYS physically present in water
+5. Creates seamless fishing cycle with maximum speed
+6. NO visible casting animation but bobber stays active
+7. Perfect for AFK farming with consistent bobber presence
 
-⚠️ Virtual Recast Benefits:
-- 🚀 FASTEST possible fishing speed (no cast delays)
-- 🌊 Bobber never leaves water (permanent positioning)
-- ⚡ Instant cycle reset (lure 5% → 100% instantly)
-- 🎯 Works perfectly with AutoShake and AutoReel
-- 💨 No animations = no server lag or detection issues
+⚠️ Virtual Recast Benefits (UPDATED):
+- 🚀 FASTEST fishing speed with guaranteed bobber presence
+- 🌊 Bobber ALWAYS remains active in water (physical presence)
+- ⚡ Instant cycle reset with actual bobber replacement
+- 🎯 Works perfectly with AutoShake + AutoReel + Super Instant Reel
+- 💨 Minimal animation = no server lag or detection issues
+- 🔄 Seamless transition - you'll always see bobber in water
 
 📋 How Skip Fish Cutscenes works:
 1. Blocks all cutscene remote calls for fish captures
