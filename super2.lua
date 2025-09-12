@@ -37,6 +37,7 @@ flags['autocastdelay'] = 0.01
 flags['autoreeldelay'] = 0.01
 flags['noanimationautocast'] = false -- NEW: No animation auto cast
 flags['autocastarmmovement'] = false -- NEW: Arm movement in auto cast
+flags['virtualrecast'] = false -- NEW: Virtual recast - bobber stays in water but resets fishing cycle
 
 -- Zone Cast Variables
 flags['autozonecast'] = false
@@ -57,13 +58,13 @@ flags['blockrodwave'] = false
 flags['blockshakeeffects'] = false
 flags['blockexaltedanim'] = false
 
--- ULTRA-INSTANT REEL SYSTEM (ZERO DELAY, ZERO ANIMATION)
-local function setupUltraInstantReel()
+-- ENHANCED Super Instant Reel System (SMOOTH & FAST FISH LIFTING)
+local function setupOptimizedSuperInstantReel()
     if not superInstantReelActive then
         superInstantReelActive = true
         
-        -- ZERO-DELAY monitoring with RenderStepped (faster than Heartbeat)
-        lureMonitorConnection = RunService.RenderStepped:Connect(function()
+        -- Single optimized monitoring loop (reduced CPU usage)
+        lureMonitorConnection = RunService.Heartbeat:Connect(function()
             if flags['superinstantreel'] then
                 pcall(function()
                     local rod = FindRod()
@@ -71,150 +72,107 @@ local function setupUltraInstantReel()
                         local lureValue = rod.values.lure and rod.values.lure.Value or 0
                         local biteValue = rod.values.bite and rod.values.bite.Value or false
                         
-                        -- PREEMPTIVE ANIMATION BLOCKING (before they even start)
+                        -- ANIMATION HANDLING: Speed up or disable animations based on settings
                         local character = lp.Character
                         if character and character:FindFirstChild("Humanoid") then
                             local humanoid = character.Humanoid
                             
-                            -- BLOCK ALL FISHING ANIMATIONS IMMEDIATELY
-                            for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
-                                local animName = track.Name:lower()
-                                local animId = tostring(track.Animation.AnimationId):lower()
-                                
-                                if animName:find("fish") or animName:find("reel") or animName:find("catch") or 
-                                   animName:find("lift") or animName:find("cast") or animName:find("rod") or
-                                   animName:find("pull") or animName:find("bobber") or animName:find("yank") or
-                                   animName:find("hook") or animName:find("swing") or animName:find("throw") or
-                                   animId:find("fish") or animId:find("reel") or animId:find("catch") or
-                                   animId:find("lift") or animId:find("cast") or animId:find("rod") or
-                                   animId:find("pull") or animId:find("bobber") or animId:find("yank") then
-                                    track:Stop() -- INSTANT STOP
-                                    track:AdjustSpeed(0) -- ZERO SPEED
-                                    track:Destroy() -- DESTROY COMPLETELY
+                            if flags['superinstantnoanimation'] then
+                                -- DISABLE ALL ANIMATIONS: Stop all reel/fish animations completely
+                                for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                                    if track.Name:lower():find("fish") or track.Name:lower():find("reel") or 
+                                       track.Name:lower():find("catch") or track.Name:lower():find("lift") or
+                                       track.Name:lower():find("cast") or track.Name:lower():find("rod") then
+                                        track:Stop() -- Completely stop animation
+                                    end
+                                end
+                            else
+                                -- FAST FISH LIFTING: Speed up character animations when super instant reel is active
+                                for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                                    if track.Name:lower():find("fish") or track.Name:lower():find("reel") or 
+                                       track.Name:lower():find("catch") or track.Name:lower():find("lift") then
+                                        track:AdjustSpeed(3) -- 3x faster fish lifting animation
+                                    end
                                 end
                             end
                         end
                         
-                        -- ULTRA-INSTANT catch (LOWER THRESHOLD = FASTER RESPONSE)
-                        if lureValue >= 90 or biteValue == true then -- Even lower threshold
-                            -- MEGA-SPAM reelfinished for GUARANTEED completion
-                            for i = 1, 15 do -- More spam for absolute certainty
-                                spawn(function() -- Parallel execution for speed
-                                    ReplicatedStorage.events.reelfinished:FireServer(100, true)
-                                end)
+                        -- ULTRA-INSTANT catch when fish activity detected (ZERO ANIMATION)
+                        if lureValue >= 95 or biteValue == true then -- Lower threshold for faster response
+                            -- IMMEDIATE completion before any animation can start
+                            for i = 1, 5 do -- Multiple rapid fires
+                                ReplicatedStorage.events.reelfinished:FireServer(100, true)
                             end
                             
-                            -- INSTANT GUI annihilation (multiple methods)
-                            spawn(function()
-                                for _, gui in pairs(lp.PlayerGui:GetChildren()) do
-                                    if gui.Name == "reel" or gui.Name:lower():find("reel") then
-                                        gui:Destroy()
-                                    end
-                                end
-                            end)
+                            -- INSTANT GUI destruction
+                            local reelGui = lp.PlayerGui:FindFirstChild("reel")
+                            if reelGui then
+                                reelGui:Destroy()
+                            end
                             
-                            -- NUCLEAR ANIMATION STOP (all possible fishing animations)
-                            spawn(function()
-                                local character = lp.Character
-                                if character and character:FindFirstChild("Humanoid") then
-                                    local humanoid = character.Humanoid
-                                    for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                            -- FORCE STOP any animations that might have started
+                            local character = lp.Character
+                            if character and character:FindFirstChild("Humanoid") then
+                                local humanoid = character.Humanoid
+                                for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                                    local animName = track.Name:lower()
+                                    if animName:find("fish") or animName:find("reel") or animName:find("cast") or
+                                       animName:find("rod") or animName:find("catch") or animName:find("lift") or
+                                       animName:find("pull") or animName:find("bobber") then
                                         track:Stop()
                                         track:AdjustSpeed(0)
-                                        pcall(function() track:Destroy() end)
-                                    end
-                                    
-                                    -- STOP ALL TOOL ANIMATIONS TOO
-                                    local tool = character:FindFirstChildOfClass("Tool")
-                                    if tool then
-                                        for _, obj in pairs(tool:GetDescendants()) do
-                                            if obj:IsA("Animation") then
-                                                obj.AnimationId = "" -- Clear animation ID
-                                            elseif obj:IsA("AnimationTrack") then
-                                                obj:Stop()
-                                                obj:Destroy()
-                                            end
-                                        end
                                     end
                                 end
-                            end)
+                            end
                             
-                            print("🚀 [ULTRA-INSTANT] Lure:" .. lureValue .. "% - ABSOLUTE ZERO DELAY!")
+                            print("⚡ [ULTRA-INSTANT] Lure:" .. lureValue .. "% - ZERO ANIMATION COMPLETION!")
                         end
                     end
                 end)
             end
         end)
         
-        -- INSTANT GUI INTERCEPTOR (ZERO DELAY)
+        -- Optimized GUI intercept (prevents duplicate processing)
         local playerGui = lp.PlayerGui
         playerGui.ChildAdded:Connect(function(gui)
-            if flags['superinstantreel'] and (gui.Name == "reel" or gui.Name:lower():find("reel")) then
-                -- NO DELAY - INSTANT DESTRUCTION
-                spawn(function()
+            if flags['superinstantreel'] and gui.Name == "reel" then
+                -- Small delay to prevent conflicts with autoshake
+                task.wait(0.05)
+                pcall(function()
                     gui:Destroy()
-                    -- Triple-fire for absolute completion
-                    for i = 1, 10 do
-                        ReplicatedStorage.events.reelfinished:FireServer(100, true)
-                    end
-                    print("� [INSTANT GUI KILL] Reel GUI destroyed on spawn!")
+                    ReplicatedStorage.events.reelfinished:FireServer(100, true)
+                    -- print("🚀 [SMOOTH GUI] Reel interface smoothly bypassed!")
                 end)
             end
         end)
         
-        -- ULTRA-AGGRESSIVE ANIMATION BLOCKING SYSTEM
+        -- print("✅ [OPTIMIZED INSTANT REEL] Smooth animation system activated!")
+        -- print("🎯 Reduced CPU usage while maintaining instant catch!")
+        
+        -- CONTINUOUS ANIMATION DISABLING SYSTEM (for no animation mode)
         task.spawn(function()
             while superInstantReelActive do
-                task.wait(0.001) -- Check every 1ms - MAXIMUM AGGRESSION
-                if flags['superinstantreel'] then
+                task.wait(0.05) -- Check every 50ms for more aggressive blocking
+                if flags['superinstantreel'] and flags['superinstantnoanimation'] then
                     pcall(function()
                         local character = lp.Character
                         if character and character:FindFirstChild("Humanoid") then
                             local humanoid = character.Humanoid
                             
-                            -- NUCLEAR ANIMATION ANNIHILATION
+                            -- AGGRESSIVELY stop all fishing-related animations
                             for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
                                 local animName = track.Name:lower()
                                 local animId = tostring(track.Animation.AnimationId):lower()
                                 
-                                -- EXPANDED PATTERN DETECTION (catches ALL fishing animations)
+                                -- Expanded animation detection patterns
                                 if animName:find("fish") or animName:find("reel") or animName:find("cast") or 
                                    animName:find("rod") or animName:find("catch") or animName:find("lift") or
                                    animName:find("pull") or animName:find("bobber") or animName:find("yank") or
-                                   animName:find("hook") or animName:find("swing") or animName:find("throw") or
-                                   animName:find("drag") or animName:find("haul") or animName:find("tug") or
                                    animId:find("fish") or animId:find("reel") or animId:find("cast") or
                                    animId:find("rod") or animId:find("catch") or animId:find("lift") or
-                                   animId:find("pull") or animId:find("bobber") or animId:find("yank") or
-                                   animId:find("hook") or animId:find("swing") or animId:find("throw") then
-                                    
-                                    track:Stop() -- STOP
-                                    track:AdjustSpeed(0) -- ZERO SPEED
-                                    pcall(function() track:Destroy() end) -- DESTROY
-                                end
-                            end
-                            
-                            -- BLOCK TOOL ANIMATIONS TOO
-                            local tool = character:FindFirstChildOfClass("Tool")
-                            if tool then
-                                for _, obj in pairs(tool:GetDescendants()) do
-                                    if obj:IsA("Animation") then
-                                        local animId = tostring(obj.AnimationId):lower()
-                                        if animId:find("fish") or animId:find("reel") or animId:find("cast") then
-                                            obj.AnimationId = "" -- Clear animation
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                        
-                        -- DESTROY REEL GUIs CONTINUOUSLY
-                        for _, gui in pairs(lp.PlayerGui:GetChildren()) do
-                            if gui.Name == "reel" or gui.Name:lower():find("reel") then
-                                gui:Destroy()
-                                -- Spam reelfinished when destroying GUI
-                                for i = 1, 5 do
-                                    ReplicatedStorage.events.reelfinished:FireServer(100, true)
+                                   animId:find("pull") or animId:find("bobber") or animId:find("yank") then
+                                    track:Stop() -- Aggressively stop all fishing animations
+                                    track:AdjustSpeed(0) -- Set speed to 0 as backup
                                 end
                             end
                         end
@@ -225,8 +183,8 @@ local function setupUltraInstantReel()
     end
 end
 
--- Call ultra-instant setup function
-setupUltraInstantReel()
+-- Call optimized setup function
+setupOptimizedSuperInstantReel()
 
 -- Zone Casting Function (inspired by main2.lua)
 local function ZoneCasting()
@@ -2094,6 +2052,18 @@ CastSection:NewToggle("Auto Cast Arm Movement", "🤖 Enable throwing animation 
     end
 end)
 
+-- NEW: Virtual Recast Toggle
+CastSection:NewToggle("Virtual Recast", "🌊 Bobber stays in water but resets fishing cycle (ultra-fast)", function(state)
+    flags['virtualrecast'] = state
+    if state then
+        -- print("🌊 [Virtual Recast] Activated - Bobber stays in water!")
+        -- print("⚡ [Virtual Recast] Fishing cycle resets without casting!")
+        -- print("🎯 [Virtual Recast] Maximum speed fishing mode!")
+    else
+        -- print("🎣 [Virtual Recast] Deactivated - Normal cast/recast cycle")
+    end
+end)
+
 -- Instant Bobber Toggle
 CastSection:NewToggle("Instant Bobber", "⚡ STRONG penetration through boats & thick obstacles", function(state)
     flags['instantbobber'] = state
@@ -2263,55 +2233,31 @@ ReelSection:NewToggle("Auto Reel", "Automatically reel in fish", function(state)
 end)
 
 -- Super Instant Reel Toggle
-ReelSection:NewToggle("Super Instant Reel", "🚀 NUCLEAR INSTANT CATCH - Zero minigame, zero animation, zero delay", function(state)
+ReelSection:NewToggle("Super Instant Reel", "⚡ ZERO ANIMATION + FAST FISH LIFTING - Instant catch with speed boost", function(state)
     flags['superinstantreel'] = state
     if state then
         flags['autoreel'] = false -- Disable normal auto reel if super instant enabled
         flags['alwayscatch'] = false -- Disable always catch to prevent conflicts
         flags['superinstantnoanimation'] = true -- AUTOMATICALLY enable no animation mode
-        print("🚀 [NUCLEAR INSTANT REEL] MAXIMUM SPEED ACTIVATED!")
-        print("💀 [MINIGAME KILLER] All reel minigames will be instantly destroyed!")
-        print("🚫 [ANIMATION ANNIHILATOR] All fishing animations blocked!")
-        print("⚡ [ZERO DELAY] Fish caught before minigame even appears!")
+        print("🚀 [Super Instant Reel] ACTIVATED - Maximum Speed!")
+        print("⚡ [Auto No-Animation] Animations automatically disabled for maximum speed!")
+        print("🎯 [Zero Animation] Instant catch with NO minigame!")
     else
         flags['superinstantnoanimation'] = false -- Disable no animation when super instant reel is off
-        print("⏸️ [Nuclear Instant Reel] Deactivated")
-        print("🎮 [Minigames] Normal reel minigames restored")
+        print("⏸️ [Super Instant Reel] Deactivated")
         print("🎬 [Animations] Normal animations restored")
     end
 end)
 
 -- No Animation Toggle for Super Instant Reel
-ReelSection:NewToggle("Nuclear Animation Block", "� COMPLETELY ANNIHILATE all fishing animations and minigames", function(state)
+ReelSection:NewToggle("Disable Reel Animations", "🚫 Completely disable all reel/fish animations when Super Instant Reel is active", function(state)
     flags['superinstantnoanimation'] = state
     if state then
-        print("� [NUCLEAR BLOCK] ALL fishing animations will be annihilated!")
-        print("🚫 [MINIGAME KILLER] Reel minigames prevented at source!")
-        print("⚡ [ZERO TOLERANCE] Maximum aggression mode activated!")
+        -- print("🚫 [No Animation] All reel animations will be disabled!")
+        -- print("⚡ [Ultra Speed] Maximum performance mode activated!")
     else
-        print("🎬 [NUCLEAR BLOCK] Animation blocking deactivated")
+        -- print("🎬 [Animations] Reel animations will play normally")
     end
-end)
-
--- ULTIMATE INSTANT COMPLETION BUTTON
-ReelSection:NewButton("🚀 INSTANT FISH NOW", "Immediately complete current fish (if any)", function()
-    pcall(function()
-        -- MEGA-SPAM completion
-        for i = 1, 30 do
-            spawn(function()
-                ReplicatedStorage.events.reelfinished:FireServer(100, true)
-            end)
-        end
-        
-        -- Destroy any reel GUIs
-        for _, gui in pairs(lp.PlayerGui:GetChildren()) do
-            if gui.Name == "reel" or gui.Name:lower():find("reel") then
-                gui:Destroy()
-            end
-        end
-        
-        print("🚀 [MANUAL INSTANT] Fish completed manually!")
-    end)
 end)
 
 -- Fix slider issue - properly define default value with initial state
@@ -2891,7 +2837,7 @@ RunService.Heartbeat:Connect(function()
     end
     
     -- NOTE: AutoShake V2 runs independently via ChildAdded connection (main4.lua style)
-    -- ENHANCED AUTOCAST (SUPPORTS ARM MOVEMENT TOGGLE)
+    -- ENHANCED AUTOCAST (SUPPORTS ARM MOVEMENT TOGGLE + VIRTUAL RECAST)
     if flags['autocast'] then
         local rod = FindRod()
         local currentDelay = flags['autocastdelay'] or 0.5
@@ -2901,11 +2847,32 @@ RunService.Heartbeat:Connect(function()
             currentDelay = math.max(currentDelay, 0.8) -- Minimum 0.8s delay for smooth operation
         end
         
-        if rod ~= nil and rod['values']['lure'].Value <= .001 then
+        -- VIRTUAL RECAST: Check for ANY lure value condition (not just <= 0.001)
+        local shouldRecast = false
+        if flags['virtualrecast'] then
+            -- Virtual recast triggers when lure is very low OR when fish cycle should reset
+            shouldRecast = rod ~= nil and rod['values']['lure'].Value <= 5 -- Much higher threshold for faster cycling
+        else
+            -- Normal recast only when bobber is out of water
+            shouldRecast = rod ~= nil and rod['values']['lure'].Value <= .001
+        end
+        
+        if shouldRecast then
             task.wait(currentDelay)
             
-            -- Check casting mode priority: No Animation > Arm Movement > Enhanced Instant > Instant > Normal
-            if flags['noanimationautocast'] then
+            -- Check casting mode priority: Virtual Recast > No Animation > Arm Movement > Enhanced Instant > Instant > Normal
+            if flags['virtualrecast'] then
+                -- VIRTUAL RECAST: Reset lure value without physical cast for ultra-fast fishing
+                if rod and rod['values'] and rod['values']['lure'] then
+                    -- Reset lure to 100% and clear bite state for fresh cycle
+                    rod['values']['lure'].Value = 100
+                    if rod['values']['bite'] then
+                        rod['values']['bite'].Value = false -- Reset bite state
+                    end
+                    -- print("🌊 [Virtual Recast] Ultra-fast fishing cycle reset - bobber stays in water!")
+                    -- print("⚡ [Virtual Recast] Lure: 100% | Bite: Reset | No casting animation!")
+                end
+            elseif flags['noanimationautocast'] then
                 -- NO ANIMATION AUTO CAST: Use minimal negative for no animation only
                 rod.events.cast:FireServer(-25, 1) -- Small negative = no animation, instant bobber
                 -- print("🚫 [No Animation Auto Cast] Instant cast without animation!")
@@ -3587,7 +3554,23 @@ end
 4. Hook system intercepts manual casts
 5. Perfect for speed fishing setup
 
-� How Skip Fish Cutscenes works:
+🌊 How Virtual Recast works (NEW):
+1. Bobber stays permanently in water (no casting animation)
+2. Triggers when lure value <= 5% (much faster than normal 0.001%)
+3. Directly resets lure to 100% and bite state to false
+4. Creates continuous fishing cycle without any delays
+5. Ultra-fast fishing mode - maximum possible speed
+6. NO physical casting, NO animations, NO waiting
+7. Perfect for AFK farming and speed fishing setups
+
+⚠️ Virtual Recast Benefits:
+- 🚀 FASTEST possible fishing speed (no cast delays)
+- 🌊 Bobber never leaves water (permanent positioning)
+- ⚡ Instant cycle reset (lure 5% → 100% instantly)
+- 🎯 Works perfectly with AutoShake and AutoReel
+- 💨 No animations = no server lag or detection issues
+
+📋 How Skip Fish Cutscenes works:
 1. Blocks all cutscene remote calls for fish captures
 2. Instantly destroys cutscene GUIs when they appear  
 3. Covers all boss fish: Megalodon, Kraken, Scylla, Moby, Leviathan, etc.
@@ -3787,70 +3770,6 @@ task.spawn(function()
     end
 end)
 
--- NUCLEAR MINIGAME PREVENTION SYSTEM
-local function setupMinigamePrevention()
-    -- PREEMPTIVE REEL GUI BLOCKING
-    local originalInstanceNew = Instance.new
-    Instance.new = function(className, parent)
-        local instance = originalInstanceNew(className, parent)
-        
-        if flags['superinstantreel'] then
-            -- Block ScreenGui creation for reel minigame
-            if className == "ScreenGui" and parent == lp.PlayerGui then
-                instance.ChildAdded:Connect(function(child)
-                    if child.Name == "reel" or child.Name:lower():find("reel") then
-                        -- INSTANT ANNIHILATION
-                        spawn(function()
-                            child:Destroy()
-                            -- MEGA-SPAM completion
-                            for i = 1, 20 do
-                                ReplicatedStorage.events.reelfinished:FireServer(100, true)
-                            end
-                            print("💀 [NUCLEAR BLOCK] Reel minigame prevented at creation!")
-                        end)
-                    end
-                end)
-            end
-            
-            -- Block Frame creation within reel GUIs
-            if className == "Frame" and parent and parent.Name == "reel" then
-                instance:Destroy()
-                print("🚫 [FRAME BLOCK] Reel frame blocked!")
-                return originalInstanceNew("Frame") -- Return dummy
-            end
-        end
-        
-        return instance
-    end
-    
-    -- HOOK REELFINISHED EVENT TO PREVENT MINIGAME ENTIRELY
-    local originalConnect = lp.PlayerGui.ChildAdded.Connect
-    lp.PlayerGui.ChildAdded.Connect = function(self, callback)
-        local wrappedCallback = function(child)
-            if flags['superinstantreel'] and (child.Name == "reel" or child.Name:lower():find("reel")) then
-                -- IMMEDIATE ANNIHILATION - NO MINIGAME ALLOWED
-                spawn(function()
-                    child:Destroy()
-                    -- ULTRA-SPAM to guarantee completion
-                    for i = 1, 25 do
-                        spawn(function()
-                            ReplicatedStorage.events.reelfinished:FireServer(100, true)
-                        end)
-                    end
-                    print("⚡ [HOOK BLOCK] Reel GUI hooked and destroyed!")
-                end)
-                return -- Don't call original callback
-            end
-            callback(child)
-        end
-        return originalConnect(self, wrappedCallback)
-    end
-    
-    print("🚀 [NUCLEAR PREVENTION] Minigame prevention system armed!")
-end
-
-setupMinigamePrevention()
-
 -- FINAL SAFETY NET - Continuous monitoring
 task.spawn(function()
     while true do
@@ -3861,17 +3780,15 @@ task.spawn(function()
                 for _, child in pairs(lp.PlayerGui:GetChildren()) do
                     if child.Name == "reel" or (child:IsA("ScreenGui") and child:FindFirstChild("reel")) then
                         child:Destroy()
-                        -- MEGA-FIRE for guaranteed completion
-                        for i = 1, 15 do
-                            spawn(function()
-                                ReplicatedStorage.events.reelfinished:FireServer(100, true)
-                            end)
+                        -- Triple fire for guaranteed completion
+                        for i = 1, 3 do
+                            ReplicatedStorage.events.reelfinished:FireServer(100, true)
                         end
-                        print("🗑️ [FINAL SAFETY] Reel GUI eliminated - MEGA COMPLETION!")
+                        print("🗑️ [FINAL SAFETY] Reel GUI eliminated - INSTANT COMPLETION!")
                     end
                 end
                 
-                -- NUCLEAR ANIMATION STOPPING
+                -- AGGRESSIVE ANIMATION STOPPING
                 local character = lp.Character
                 if character and character:FindFirstChild("Humanoid") then
                     local humanoid = character.Humanoid
@@ -3879,26 +3796,15 @@ task.spawn(function()
                         local animName = track.Name:lower()
                         if animName:find("fish") or animName:find("reel") or animName:find("cast") or
                            animName:find("rod") or animName:find("catch") or animName:find("lift") or
-                           animName:find("pull") or animName:find("bobber") or animName:find("yank") or
-                           animName:find("hook") or animName:find("swing") or animName:find("throw") then
+                           animName:find("pull") or animName:find("bobber") or animName:find("yank") then
                             track:Stop()
-                            track:AdjustSpeed(0)
-                            pcall(function() track:Destroy() end)
+                            track:AdjustSpeed(0) -- Force stop
                         end
-                    end
-                end
-                
-                -- BLOCK SOUND EFFECTS TOO
-                for _, obj in pairs(workspace:GetDescendants()) do
-                    if obj:IsA("Sound") and obj.Name:lower():find("reel") then
-                        obj.Volume = 0
-                        obj:Stop()
                     end
                 end
             end)
         end
     end
-end)
 end)
 
 -- print("✅ [ULTIMATE SYSTEM] All hook systems activated!")
