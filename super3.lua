@@ -132,17 +132,18 @@ local function setupOptimizedSuperInstantReel()
             end
         end)
         
-        -- Optimized GUI intercept (prevents duplicate processing)
+        -- 🚫 ZERO-FLASH GUI INTERCEPT (Enhanced with immediate disable)
         local playerGui = lp.PlayerGui
         playerGui.ChildAdded:Connect(function(gui)
             if flags['superinstantreel'] and gui.Name == "reel" then
-                -- Small delay to prevent conflicts with autoshake
-                task.wait(0.05)
-                pcall(function()
-                    gui:Destroy()
-                    ReplicatedStorage.events.reelfinished:FireServer(100, true)
-                    -- print("🚀 [SMOOTH GUI] Reel interface smoothly bypassed!")
-                end)
+                -- IMMEDIATE VISUAL BLOCKING - No flash allowed
+                gui.Enabled = false -- Block immediately
+                gui.Visible = false -- Hide immediately
+                gui:Destroy() -- Then destroy
+                
+                -- Fire completion without delays
+                ReplicatedStorage.events.reelfinished:FireServer(100, true)
+                -- print("� [ZERO-FLASH] Blocked reel GUI with no visual flash!")
             end
         end)
         
@@ -2968,11 +2969,16 @@ RunService.Heartbeat:Connect(function()
                         end)
                     end
                     
-                    -- Smooth GUI cleanup
-                    local reelGui = lp.PlayerGui:FindFirstChild("reel")
-                    if reelGui then
-                        reelGui:Destroy()
-                    end
+                    -- 🚫 PREEMPTIVE GUI CLEANUP - Disable all potential reel GUIs FIRST
+                    pcall(function()
+                        for _, gui in pairs(lp.PlayerGui:GetChildren()) do
+                            if gui.Name == "reel" or gui.Name:lower():find("reel") or gui:FindFirstChild("reel") then
+                                gui.Enabled = false -- Disable immediately
+                                gui.Visible = false -- Hide immediately  
+                                gui:Destroy() -- Then destroy
+                            end
+                        end
+                    end)
                     
                     -- FAST FISH LIFTING: Speed boost for character animations
                     pcall(function()
@@ -3528,14 +3534,17 @@ if flags then
         end
     end)
     
-    -- ULTIMATE GUI INTERCEPTION - Destroy reel GUI instantly when it appears
+    -- 🚫 ULTIMATE GUI INTERCEPTION - IMMEDIATE DESTRUCTION (NO VISUAL FLASH)
     lp.PlayerGui.ChildAdded:Connect(function(gui)
         if flags['superinstantreel'] then
             if gui.Name == "reel" or gui.Name == "screen gui reelable" or gui:FindFirstChild("reel") then
-                gui:Destroy()
+                -- INSTANT DESTRUCTION - No wait, no delay
+                gui.Enabled = false -- Disable immediately to prevent flash
+                gui.Visible = false -- Hide immediately
+                gui:Destroy() -- Then destroy
                 
                 -- Fire completion immediately when GUI intercepted
-                for i = 1, 12 do
+                for i = 1, 8 do -- Reduced spam for efficiency
                     spawn(function()
                         pcall(function()
                             ReplicatedStorage.events.reelfinished:FireServer(100, true)
@@ -3543,25 +3552,33 @@ if flags then
                     end)
                 end
                 
-                -- print("💀 [GUI INTERCEPTOR] Destroyed " .. gui.Name .. " instantly on spawn!")
+                -- print("💀 [NO-FLASH INTERCEPTOR] Blocked " .. gui.Name .. " with zero visual!")
             end
         end
     end)
     
-    -- TERTIARY MONITORING: Pre-emptive GUI destruction
+    -- 🚫 CONTINUOUS ANTI-FLASH MONITORING - ZERO TOLERANCE FOR REEL GUIs
     task.spawn(function()
         while true do
-            task.wait(0.0001) -- Check every 0.1ms
+            task.wait(0.001) -- Ultra-fast monitoring every 1ms
             if flags['superinstantreel'] then
                 pcall(function()
                     for _, gui in pairs(lp.PlayerGui:GetChildren()) do
-                        if gui.Name:lower():find("reel") or gui.Name == "screen gui reelable" then
+                        if gui.Name:lower():find("reel") or gui.Name == "screen gui reelable" or 
+                           gui:FindFirstChild("reel") or gui.Name == "reelgui" then
+                            -- TRIPLE DISABLE: Ensure no visual flash
+                            gui.Enabled = false
+                            gui.Visible = false
+                            gui.ResetOnSpawn = false
                             gui:Destroy()
-                            -- Fire multiple completions
-                            for i = 1, 5 do
-                                ReplicatedStorage.events.reelfinished:FireServer(100, true)
+                            
+                            -- Fire completion to ensure fish is caught
+                            for i = 1, 3 do -- Efficient spam
+                                spawn(function()
+                                    ReplicatedStorage.events.reelfinished:FireServer(100, true)
+                                end)
                             end
-                            -- print("🔥 [PREEMPTIVE] Destroyed " .. gui.Name .. " ultra-fast!")
+                            -- print("� [ANTI-FLASH] Eliminated reel GUI with ZERO visual impact!")
                         end
                     end
                 end)
@@ -3598,6 +3615,14 @@ end
 5. Works with Super Instant Reel for maximum speed
 6. Reduces fishing cycle time by 50-80%
 7. Uses ultra-fast monitoring (1ms intervals)
+
+🚫 How ANTI-FLASH Super Instant Reel works:
+1. TRIPLE GUI blocking: Enabled=false, Visible=false, Destroy()
+2. Multiple interceptors: ChildAdded + continuous monitoring
+3. ZERO visual flash - GUI blocked before it renders
+4. Ultra-fast monitoring (1ms intervals) for instant detection
+5. Immediate reelfinished firing without delays
+6. Complete reel minigame elimination with no visual artifacts
 
 ⚡ Usage for MAXIMUM SPEED:
 - Enable "Predictive AutoCast" for zero-gap recasting
