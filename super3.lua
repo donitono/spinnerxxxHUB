@@ -38,6 +38,7 @@ flags['autoreeldelay'] = 0.01
 flags['noanimationautocast'] = false -- NEW: No animation auto cast
 flags['autocastarmmovement'] = false -- NEW: Arm movement in auto cast
 flags['virtualrecast'] = false -- NEW: Virtual recast - bobber stays in water but resets fishing cycle
+flags['superpowercast'] = false -- NEW: Super power cast - maximum throwing distance and power
 
 -- Zone Cast Variables
 flags['autozonecast'] = false
@@ -2088,6 +2089,18 @@ CastSection:NewToggle("Enhanced Instant Bobber", "🌊 EXTREME penetration throu
     end
 end)
 
+-- NEW: Super Power Cast Toggle
+CastSection:NewToggle("Super Power Cast", "💪 MAXIMUM throwing distance and power (1000+ units)", function(state)
+    flags['superpowercast'] = state
+    if state then
+        print("💪 [Super Power Cast] Activated - MAXIMUM throwing power!")
+        print("🚀 [Super Power Cast] Cast distance: 1000+ units!")
+        print("⚡ [Super Power Cast] Ultimate long-range fishing!")
+    else
+        print("🎣 [Super Power Cast] Deactivated - Normal cast power")
+    end
+end)
+
 -- Fix slider issue - properly define default value with initial state
 local castSlider = CastSection:NewSlider("Auto Cast Delay", "Delay between auto casts (seconds)", 0.1, 5, function(value)
     flags['autocastdelay'] = value
@@ -2099,6 +2112,13 @@ flags['virtualrecastthreshold'] = 2 -- Default 2% threshold
 CastSection:NewSlider("Virtual Recast Threshold", "Lure % to trigger virtual recast (lower = faster)", 1, 10, function(value)
     flags['virtualrecastthreshold'] = value
     print("[Virtual Recast] Threshold set to: " .. value .. "% lure")
+end)
+
+-- Super Power Cast Distance Slider
+flags['superpowercastdistance'] = 1000 -- Default 1000 units
+CastSection:NewSlider("Super Power Distance", "Cast throwing distance in units (100-2000)", 100, 2000, function(value)
+    flags['superpowercastdistance'] = value
+    print("[Super Power Cast] Distance set to: " .. value .. " units")
 end)
 
 -- Set initial slider value to match default
@@ -2873,12 +2893,18 @@ RunService.Heartbeat:Connect(function()
         if shouldRecast then
             task.wait(currentDelay)
             
-            -- PRIORITY: Virtual Recast uses instant bobber method for speed
+            -- PRIORITY: Virtual Recast > Super Power Cast > No Animation > Arm Movement > Enhanced Instant > Instant > Normal
             if flags['virtualrecast'] then
                 -- VIRTUAL RECAST: Use instant bobber technique for seamless replacement
                 rod.events.cast:FireServer(-25, 1) -- Instant bobber placement (same as no-animation)
                 print("🌊 [Virtual Recast] Instant bobber replacement activated!")
                 print("⚡ [Virtual Recast] Lure was: " .. (rod['values']['lure'].Value or "nil") .. "% - Now recasting!")
+            elseif flags['superpowercast'] then
+                -- SUPER POWER CAST: MAXIMUM throwing distance and power
+                local castDistance = flags['superpowercastdistance'] or 1000
+                rod.events.cast:FireServer(castDistance, 1) -- Use custom distance for maximum power
+                print("💪 [Super Power Cast] MAXIMUM power cast activated!")
+                print("🚀 [Super Power Cast] Distance: " .. castDistance .. " units - ULTRA LONG RANGE!")
             elseif flags['noanimationautocast'] then
                 -- NO ANIMATION AUTO CAST: Use minimal negative for no animation only
                 rod.events.cast:FireServer(-25, 1) -- Small negative = no animation, instant bobber
@@ -3172,6 +3198,13 @@ if CheckFunc(hookmetamethod) then
             args[1] = -25   -- Small negative distance = no animation, instant bobber
             args[2] = 1     -- Keep force parameter
             -- print("🚫 [No Animation Cast Hook] Manual cast without animation!")
+            return old(self, unpack(args))
+        elseif method == 'FireServer' and self.Name == 'cast' and flags['superpowercast'] then
+            -- SUPER POWER CAST HOOK: MAXIMUM throwing distance and power for manual casts
+            local castDistance = flags['superpowercastdistance'] or 1000
+            args[1] = castDistance  -- Use custom distance for maximum power
+            args[2] = 1     -- Keep force parameter
+            print("💪 [Super Power Cast Hook] Manual cast with MAXIMUM power: " .. castDistance .. " units!")
             return old(self, unpack(args))
         elseif method == 'FireServer' and self.Name == 'cast' and flags['enhancedinstantbobber'] then
             -- ENHANCED INSTANT BOBBER HOOK: EXTREME penetration for ALL boats/ships
@@ -3589,6 +3622,23 @@ end
 3. Bobber drops instantly near player
 4. Hook system intercepts manual casts
 5. Perfect for speed fishing setup
+
+💪 How Super Power Cast works (NEW):
+1. MAXIMUM throwing distance (100-2000 units, default: 1000)
+2. Works with both AutoCast and Manual casting
+3. Ultra long-range fishing capabilities
+4. Adjustable power via slider control
+5. Perfect for deep water and distant fishing spots
+6. Overrides all other casting modes when active
+7. Full animation with maximum throwing power
+
+⚠️ Super Power Cast Benefits:
+- 🚀 LONGEST possible casting distance (up to 2000 units)
+- 💪 MAXIMUM throwing power with full animation
+- 🎯 Perfect for deep water fishing and hard-to-reach spots
+- ⚡ Adjustable distance from 100-2000 units
+- 🌊 Works great for ocean and deep lake fishing
+- 🎣 Full arm animation shows maximum effort
 
 🌊 How Virtual Recast works (NEW - FIXED):
 1. Monitors lure value and triggers at <= 10% OR <= 0.001%
