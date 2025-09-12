@@ -32,6 +32,57 @@ local fishabundancevisible = false
 local deathcon
 local tooltipmessage
 
+--// Essential Functions (Must be defined before use)
+local getchar = function()
+    return lp.Character or lp.CharacterAdded:Wait()
+end
+
+local gethrp = function()
+    return getchar():WaitForChild('HumanoidRootPart')
+end
+
+local gethum = function()
+    return getchar():WaitForChild('Humanoid')
+end
+
+local FindChildOfClass = function(parent, classname)
+    return parent:FindFirstChildOfClass(classname)
+end
+
+local FindChild = function(parent, child)
+    return parent:FindFirstChild(child)
+end
+
+local FindChildOfType = function(parent, childname, classname)
+    local child = parent:FindFirstChild(childname)
+    if child and child.ClassName == classname then
+        return child
+    end
+end
+
+local FindRod = function()
+    if FindChildOfClass(getchar(), 'Tool') and FindChild(FindChildOfClass(getchar(), 'Tool'), 'values') then
+        return FindChildOfClass(getchar(), 'Tool')
+    else
+        return nil
+    end
+end
+
+local message = function(text, time)
+    pcall(function()
+        if tooltipmessage then tooltipmessage:Remove() end
+        tooltipmessage = require(lp.PlayerGui:WaitForChild("GeneralUIModule")):GiveToolTip(lp, text)
+        if time then
+            task.spawn(function()
+                task.wait(time)
+                if tooltipmessage then
+                    tooltipmessage:Remove()
+                end
+            end)
+        end
+    end)
+end
+
 -- Default delay values
 flags['autocastdelay'] = 0.01
 flags['autoreeldelay'] = 0.01
@@ -1067,46 +1118,8 @@ table.sort(MarianaVeilNames)
 table.sort(AllLocationNames)
 
 --// Functions
-FindChildOfClass = function(parent, classname)
-    return parent:FindFirstChildOfClass(classname)
-end
-FindChild = function(parent, child)
-    return parent:FindFirstChild(child)
-end
-FindChildOfType = function(parent, childname, classname)
-    child = parent:FindFirstChild(childname)
-    if child and child.ClassName == classname then
-        return child
-    end
-end
 CheckFunc = function(func)
     return typeof(func) == 'function'
-end
-
---// Custom Functions
-getchar = function()
-    return lp.Character or lp.CharacterAdded:Wait()
-end
-gethrp = function()
-    return getchar():WaitForChild('HumanoidRootPart')
-end
-gethum = function()
-    return getchar():WaitForChild('Humanoid')
-end
-FindRod = function()
-    if FindChildOfClass(getchar(), 'Tool') and FindChild(FindChildOfClass(getchar(), 'Tool'), 'values') then
-        return FindChildOfClass(getchar(), 'Tool')
-    else
-        return nil
-    end
-end
-message = function(text, time)
-    if tooltipmessage then tooltipmessage:Remove() end
-    tooltipmessage = require(lp.PlayerGui:WaitForChild("GeneralUIModule")):GiveToolTip(lp, text)
-    task.spawn(function()
-        task.wait(time)
-        if tooltipmessage then tooltipmessage:Remove(); tooltipmessage = nil end
-    end)
 end
 
 --// UI
@@ -2909,59 +2922,65 @@ RunService.Heartbeat:Connect(function()
     
     -- 🌊 PERSISTENT BOBBER SYSTEM - KEEP BOBBER ALWAYS IN WATER
     if flags['persistentbobber'] and flags['autocast'] then
-        local rod = FindRod()
-        if rod then
-            local lureValue = rod.values.lure and rod.values.lure.Value or 0
-            local currentTime = tick()
-            
-            -- Check bobber status every 0.1 seconds to minimize performance impact
-            if currentTime - lastBobberCheckTime >= 0.1 then
-                lastBobberCheckTime = currentTime
+        pcall(function()
+            local rod = FindRod()
+            if rod and rod.values then
+                local lureValue = rod.values.lure and rod.values.lure.Value or 0
+                local currentTime = tick()
                 
-                local hasBobber = rod:FindFirstChild("bobber")
-                
-                -- PREEMPTIVE RECAST: Cast new bobber BEFORE current one disappears
-                if hasBobber and lureValue >= 95 and not flags['superinstantreel'] then
-                    -- Preemptive cast when lure is almost complete (95%+) but before it reaches 100%
-                    task.spawn(function()
-                        task.wait(0.05) -- Small delay to avoid conflicts
-                        
-                        -- Double-check rod still exists and we need to recast
-                        local freshRod = FindRod()
-                        if freshRod and freshRod.values.lure.Value <= 5 then -- After reel completed
-                            -- INSTANT PERSISTENT RECAST
-                            if flags['noanimationautocast'] then
-                                freshRod.events.cast:FireServer(-25, 1)
-                            elseif flags['enhancedinstantbobber'] then
-                                freshRod.events.cast:FireServer(-500, 1)
-                            elseif flags['instantbobber'] then
-                                freshRod.events.cast:FireServer(-250, 1)
-                            else
-                                freshRod.events.cast:FireServer(-25, 1)
-                            end
-                            -- print("🌊 [Persistent Bobber] PREEMPTIVE recast completed!")
-                        end
-                    end)
-                end
-                
-                -- BACKUP RECAST: If somehow bobber disappears, immediately recast
-                if not hasBobber and lureValue <= 0.001 then
-                    local currentDelay = math.min(flags['autocastdelay'] or 0.5, 0.1) -- Max 0.1s delay for persistent mode
-                    task.wait(currentDelay)
+                -- Check bobber status every 0.1 seconds to minimize performance impact
+                if currentTime - lastBobberCheckTime >= 0.1 then
+                    lastBobberCheckTime = currentTime
                     
-                    -- Priority casting for persistent bobber
-                    if flags['noanimationautocast'] then
-                        rod.events.cast:FireServer(-25, 1)
-                    elseif flags['enhancedinstantbobber'] then
-                        rod.events.cast:FireServer(-500, 1)
-                    elseif flags['instantbobber'] then
-                        rod.events.cast:FireServer(-250, 1)
-                    else
-                        rod.events.cast:FireServer(-25, 1)
+                    local hasBobber = rod:FindFirstChild("bobber")
+                    
+                    -- PREEMPTIVE RECAST: Cast new bobber BEFORE current one disappears
+                    if hasBobber and lureValue >= 95 and not flags['superinstantreel'] then
+                        -- Preemptive cast when lure is almost complete (95%+) but before it reaches 100%
+                        task.spawn(function()
+                            pcall(function()
+                                task.wait(0.05) -- Small delay to avoid conflicts
+                                
+                                -- Double-check rod still exists and we need to recast
+                                local freshRod = FindRod()
+                                if freshRod and freshRod.values and freshRod.values.lure and freshRod.values.lure.Value <= 5 then -- After reel completed
+                                    -- INSTANT PERSISTENT RECAST
+                                    if flags['noanimationautocast'] then
+                                        freshRod.events.cast:FireServer(-25, 1)
+                                    elseif flags['enhancedinstantbobber'] then
+                                        freshRod.events.cast:FireServer(-500, 1)
+                                    elseif flags['instantbobber'] then
+                                        freshRod.events.cast:FireServer(-250, 1)
+                                    else
+                                        freshRod.events.cast:FireServer(-25, 1)
+                                    end
+                                    -- print("🌊 [Persistent Bobber] PREEMPTIVE recast completed!")
+                                end
+                            end)
+                        end)
                     end
-                    -- print("🌊 [Persistent Bobber] BACKUP recast executed!")
+                    
+                    -- BACKUP RECAST: If somehow bobber disappears, immediately recast
+                    if not hasBobber and lureValue <= 0.001 then
+                        local currentDelay = math.min(flags['autocastdelay'] or 0.5, 0.1) -- Max 0.1s delay for persistent mode
+                        task.wait(currentDelay)
+                        
+                        -- Priority casting for persistent bobber
+                        if flags['noanimationautocast'] then
+                            rod.events.cast:FireServer(-25, 1)
+                        elseif flags['enhancedinstantbobber'] then
+                            rod.events.cast:FireServer(-500, 1)
+                        elseif flags['instantbobber'] then
+                            rod.events.cast:FireServer(-250, 1)
+                        else
+                            rod.events.cast:FireServer(-25, 1)
+                        end
+                        -- print("🌊 [Persistent Bobber] BACKUP recast executed!")
+                    end
                 end
             end
+        end)
+    end
         end
     end
     
@@ -2969,115 +2988,128 @@ RunService.Heartbeat:Connect(function()
     if flags['autocast'] and not flags['persistentbobber'] then
     -- ENHANCED AUTOCAST (SUPPORTS ARM MOVEMENT TOGGLE)
     if flags['autocast'] and not flags['persistentbobber'] then
-        local rod = FindRod()
-        local currentDelay = flags['autocastdelay'] or 0.5
-        
-        -- Add extra delay when super instant reel is active to prevent conflicts
-        if flags['superinstantreel'] then
-            currentDelay = math.max(currentDelay, 0.8) -- Minimum 0.8s delay for smooth operation
-        end
-        
-        if rod ~= nil and rod['values']['lure'].Value <= .001 then
-            task.wait(currentDelay)
-            
-            -- Check casting mode priority: No Animation > Arm Movement > Enhanced Instant > Instant > Normal
-            if flags['noanimationautocast'] then
-                -- NO ANIMATION AUTO CAST: Use minimal negative for no animation only
-                rod.events.cast:FireServer(-25, 1) -- Small negative = no animation, instant bobber
-                -- print("🚫 [No Animation Auto Cast] Instant cast without animation!")
-            elseif flags['autocastarmmovement'] then
-                -- ARM MOVEMENT AUTO CAST: Use positive distance for full animation
-                rod.events.cast:FireServer(100, 1) -- Positive distance = full arm animation
-                -- print("🤖 [Auto Cast Arm Movement] Cast with full throwing animation!")
-            elseif flags['enhancedinstantbobber'] then
-                -- ENHANCED INSTANT BOBBER: EXTREME PENETRATION for ALL boats/ships
-                rod.events.cast:FireServer(-500, 1) -- EXTREME negative distance = penetrate ANY boat/ship
-                -- print("🌊 [Enhanced Instant Bobber] EXTREME penetration through ANY boat/ship!")
-            elseif flags['instantbobber'] then
-                -- INSTANT BOBBER: STRONG penetration for boats
-                rod.events.cast:FireServer(-250, 1) -- Strong negative distance = penetrate boats and obstacles
-                -- print("⚡ [Instant Bobber] STRONG penetration through boats!")
-            else
-                -- DEFAULT: No arm movement for efficiency
-                rod.events.cast:FireServer(-25, 1) -- Default to no animation for speed
+        pcall(function()
+            local rod = FindRod()
+            if rod and rod.values then
+                local currentDelay = flags['autocastdelay'] or 0.5
+                
+                -- Add extra delay when super instant reel is active to prevent conflicts
+                if flags['superinstantreel'] then
+                    currentDelay = math.max(currentDelay, 0.8) -- Minimum 0.8s delay for smooth operation
+                end
+                
+                if rod.values.lure.Value <= 0.001 then
+                    task.wait(currentDelay)
+                    
+                    -- Check casting mode priority: No Animation > Arm Movement > Enhanced Instant > Instant > Normal
+                    if flags['noanimationautocast'] then
+                        -- NO ANIMATION AUTO CAST: Use minimal negative for no animation only
+                        rod.events.cast:FireServer(-25, 1) -- Small negative = no animation, instant bobber
+                        -- print("🚫 [No Animation Auto Cast] Instant cast without animation!")
+                    elseif flags['autocastarmmovement'] then
+                        -- ARM MOVEMENT AUTO CAST: Use positive distance for full animation
+                        rod.events.cast:FireServer(100, 1) -- Positive distance = full arm animation
+                        -- print("🤖 [Auto Cast Arm Movement] Cast with full throwing animation!")
+                    elseif flags['enhancedinstantbobber'] then
+                        -- ENHANCED INSTANT BOBBER: EXTREME PENETRATION for ALL boats/ships
+                        rod.events.cast:FireServer(-500, 1) -- EXTREME negative distance = penetrate ANY boat/ship
+                        -- print("🌊 [Enhanced Instant Bobber] EXTREME penetration through ANY boat/ship!")
+                    elseif flags['instantbobber'] then
+                        -- INSTANT BOBBER: STRONG penetration for boats
+                        rod.events.cast:FireServer(-250, 1) -- Strong negative distance = penetrate boats and obstacles
+                        -- print("⚡ [Instant Bobber] STRONG penetration through boats!")
+                    else
+                        -- DEFAULT: No arm movement for efficiency
+                        rod.events.cast:FireServer(-25, 1) -- Default to no animation for speed
+                    end
+                end
             end
-        end
+        end)
     end
+    
     if flags['autoreel'] then
-        local rod = FindRod()
-        local currentDelay = flags['autoreeldelay'] or 0.5
-        if rod ~= nil and rod['values']['lure'].Value == 100 then
-            task.wait(currentDelay)
-            ReplicatedStorage.events.reelfinished:FireServer(100, true)
-        end
+        pcall(function()
+            local rod = FindRod()
+            if rod and rod.values then
+                local currentDelay = flags['autoreeldelay'] or 0.5
+                if rod.values.lure.Value == 100 then
+                    task.wait(currentDelay)
+                    ReplicatedStorage.events.reelfinished:FireServer(100, true)
+                end
+            end
+        end)
     end
     
     -- 🚀 ENHANCED SUPER INSTANT REEL - SMOOTH & FAST FISH LIFTING!
     if flags['superinstantreel'] then
-        local rod = FindRod()
-        if rod ~= nil then
-            local lureValue = rod.values.lure and rod.values.lure.Value or 0
-            local biteValue = rod.values.bite and rod.values.bite.Value or false
-            
-            -- SMOOTH TRIGGER: Lure >= 98% OR bite detected (NO LAG)
-            if lureValue >= 98 or biteValue == true then
-                pcall(function()
-                    -- Single optimized call (no spam)
-                    ReplicatedStorage.events.reelfinished:FireServer(100, true)
-                    
-                    -- Smooth GUI cleanup
-                    local reelGui = lp.PlayerGui:FindFirstChild("reel")
-                    if reelGui then
-                        reelGui:Destroy()
-                    end
-                    
-                    -- 🌊 PERSISTENT BOBBER INTEGRATION: Immediate recast after catch
-                    if flags['persistentbobber'] then
-                        task.spawn(function()
-                            task.wait(0.02) -- Minimal delay to let reel complete
-                            
-                            local freshRod = FindRod()
-                            if freshRod and freshRod.values.lure.Value <= 5 then
-                                -- INSTANT PERSISTENT RECAST after Super Instant Reel
-                                if flags['noanimationautocast'] then
-                                    freshRod.events.cast:FireServer(-25, 1)
-                                elseif flags['enhancedinstantbobber'] then
-                                    freshRod.events.cast:FireServer(-500, 1)
-                                elseif flags['instantbobber'] then
-                                    freshRod.events.cast:FireServer(-250, 1)
-                                else
-                                    freshRod.events.cast:FireServer(-25, 1)
-                                end
-                                -- print("🌊⚡ [Super Instant + Persistent] IMMEDIATE recast after instant catch!")
-                            end
-                        end)
-                    end
-                    
-                    -- FAST FISH LIFTING: Speed boost for character animations
+        pcall(function()
+            local rod = FindRod()
+            if rod and rod.values then
+                local lureValue = rod.values.lure and rod.values.lure.Value or 0
+                local biteValue = rod.values.bite and rod.values.bite.Value or false
+                
+                -- SMOOTH TRIGGER: Lure >= 98% OR bite detected (NO LAG)
+                if lureValue >= 98 or biteValue == true then
                     pcall(function()
-                        local character = lp.Character
-                        if character and character:FindFirstChild("Humanoid") then
-                            local humanoid = character.Humanoid
-                            
-                            -- 5x speed boost for all animations during catch
-                            for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
-                                track:AdjustSpeed(5)
-                            end
-                            
-                            -- Reset to normal speed after brief period
+                        -- Single optimized call (no spam)
+                        ReplicatedStorage.events.reelfinished:FireServer(100, true)
+                        
+                        -- Smooth GUI cleanup
+                        local reelGui = lp.PlayerGui:FindFirstChild("reel")
+                        if reelGui then
+                            reelGui:Destroy()
+                        end
+                        
+                        -- 🌊 PERSISTENT BOBBER INTEGRATION: Immediate recast after catch
+                        if flags['persistentbobber'] then
                             task.spawn(function()
-                                task.wait(0.2)
-                                for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
-                                    track:AdjustSpeed(1)
-                                end
+                                pcall(function()
+                                    task.wait(0.02) -- Minimal delay to let reel complete
+                                    
+                                    local freshRod = FindRod()
+                                    if freshRod and freshRod.values and freshRod.values.lure and freshRod.values.lure.Value <= 5 then
+                                        -- INSTANT PERSISTENT RECAST after Super Instant Reel
+                                        if flags['noanimationautocast'] then
+                                            freshRod.events.cast:FireServer(-25, 1)
+                                        elseif flags['enhancedinstantbobber'] then
+                                            freshRod.events.cast:FireServer(-500, 1)
+                                        elseif flags['instantbobber'] then
+                                            freshRod.events.cast:FireServer(-250, 1)
+                                        else
+                                            freshRod.events.cast:FireServer(-25, 1)
+                                        end
+                                        -- print("🌊⚡ [Super Instant + Persistent] IMMEDIATE recast after instant catch!")
+                                    end
+                                end)
                             end)
                         end
+                        
+                        -- FAST FISH LIFTING: Speed boost for character animations
+                        pcall(function()
+                            local character = lp.Character
+                            if character and character:FindFirstChild("Humanoid") then
+                                local humanoid = character.Humanoid
+                                
+                                -- 5x speed boost for all animations during catch
+                                for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                                    track:AdjustSpeed(5)
+                                end
+                                
+                                -- Reset to normal speed after brief period
+                                task.spawn(function()
+                                    task.wait(0.2)
+                                    for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                                        track:AdjustSpeed(1)
+                                    end
+                                end)
+                            end
+                        end)
+                        
+                        -- print("⚡ [FAST LIFTING] Lure:" .. lureValue .. "% - INSTANT + SPEED BOOST!")
                     end)
-                    
-                    -- print("⚡ [FAST LIFTING] Lure:" .. lureValue .. "% - INSTANT + SPEED BOOST!")
-                end)
+                end
             end
-        end
+        end)
     end
     
     -- Instant Reel (No Delay) - RISKY but very fast
